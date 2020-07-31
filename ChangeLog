@@ -1,5 +1,7 @@
 CHANGES
 =======
 
+* Create specter.yml
+* Add tox and core python project files
 * Add initial project code
 * Initial commit

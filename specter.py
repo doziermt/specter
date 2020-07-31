@@ -149,7 +149,7 @@ class Port_Scan(Command):  # port_scan operation class
             reader = csv.DictReader(csvfile, delimiter=",")
             for row in reader:
                 parameter_value_map[row['PARAMETER'].
-                                    lower()] = row['VALUE_EXECUTED']
+                                    lower()] = row['VALUE_EXECUTED']     
 
         self.timestamp = '{:%Y-%m-%d_%H-%M-%S}'.format(datetime.datetime.now())
         self.application = parameter_value_map['application']
