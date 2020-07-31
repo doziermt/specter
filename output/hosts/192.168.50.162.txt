@@ -1,2 +1,0 @@
-443,open,syn-ack,128,,
-445,open,syn-ack,128,,
