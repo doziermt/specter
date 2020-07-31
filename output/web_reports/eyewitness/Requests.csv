@@ -1,0 +1,4 @@
+Protocol,Port,Domain,Request Status,Screenshot Path, Source Path
+http,80,192.168.50.34,Successful,/root/Desktop/specter/output/web_reports/eyewitness/screens/http.192.168.50.34.png,/root/Desktop/specter/output/web_reports/eyewitness/source/http.192.168.50.34.txt
+http,80,192.168.50.158,BadStatus,/root/Desktop/specter/output/web_reports/eyewitness/screens/http.192.168.50.158.png,/root/Desktop/specter/output/web_reports/eyewitness/source/http.192.168.50.158.txt
+http,80,192.168.50.162,Timeout,/root/Desktop/specter/output/web_reports/eyewitness/screens/http.192.168.50.162.png,/root/Desktop/specter/output/web_reports/eyewitness/source/http.192.168.50.162.txt

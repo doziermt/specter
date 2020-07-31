@@ -1,0 +1,11 @@
+﻿PARAMETER,DEFAULT_VALUES_(DontCHANGE),VALUE_EXECUTED
+INTERFACE,eth0,eth0
+APPLICATION,masscan,masscan
+SCAN_RATE,3000,1000
+MASSCAN_IP,192.168.50.200,192.168.50.250
+CLEAN_TARGET_LIST,input/ip_lists/clean_target_list.txt,input/ip_lists/clean_target_list.txt
+
+WEB_APPLICATION,eyewitness,eyewitness
+JITTER,0,0
+WEB_PORTS,80-8000-8080-8443,80-8000-8080-8443
+CLEAN_TARGET_WEB,input/ip_lists/web_scan_ip.txt,input/ip_lists/web_scan_ip.txt
