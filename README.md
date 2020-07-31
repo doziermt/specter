@@ -1,6 +1,4 @@
-# SPECTER RECON TOOL 
-
-Version 0.1
+# Specter Recon Tool
 
 **NOTE:**
 
@@ -10,17 +8,18 @@ Version 0.1
 
 #### Contents
 
-- [REQUIRMENTS TO EXECUTE](#requirements-to-execute)
-- [MINIMUM STEPS TO EXECUTION](#minimum-steps-to-execution)
-- [EXECUTION](#execution)
+- [Prerequisites](#prerequisites)
+- [Minimum Steps to Execution](#minimum-steps-to-execution)
+- [Execution](#execution)
+- [Developer Tools](#developer-tools)
 
-## REQUIRMENTS TO EXECUTE
+## Prerequisites
 
 - Must run as root for web_scan operation to work 
 - Must have nmap, masscan, eyewitness installed
 - Check file permissions - input files are 777, 655, 600
 
-## MINIMUM STEPS TO EXECUTION
+## Minimum Steps to Execution
 
 * step 1 - update /input/ip_list/target.txt
 * step 2 - update /input/ip_list/exclude.txt
@@ -29,7 +28,7 @@ Version 0.1
 
 NOTE: If a VPN is used to scan, the VPN adapter IP must match masscan_ip and banners cannot be captured
 
-## EXECUTION
+## Execution
 
 ```
 sudo python3 <application> <operation> optional flags = -s <site_name.txt> -t <target_list.txt> -e <exclution_list.txt> -h <help>
@@ -41,3 +40,11 @@ sudo python3 specter.py port_scan
 sudo python3 <application> <operation> optional flags = -s <site_name.txt> -c <clean_target_list.txt>
 sudo python3 specter.py web_scan	 
 ```
+
+## Developer Tools
+
+This project makes use of [tox](https://tox.readthedocs.io/en/latest/) to facilitate testing for developers.
+The following tox commands can be used:
+
+* `tox -e fmt`: Formats the Python project code using the Google linter tool, [yapf](https://github.com/google/yapf)
+* `tox -e lint`: Checks that the Python project code passes `yapf` linter checks
