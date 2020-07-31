@@ -2,6 +2,7 @@ import abc
 import argparse
 import datetime
 from enum import Enum
+import ipaddress
 import os
 import re
 import subprocess
@@ -9,7 +10,7 @@ import csv
 import string
 import mmap
 import time
-#import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET
 
 global IS_DEBUG_ENABLED
 global INFO
@@ -72,7 +73,6 @@ class ValidationError(Exception):
 
 class Command(abc.ABC):
     """Abstract base class that all commands should inherit from."""
-
     @abc.abstractmethod
     def execute(self):
         """Method for executing the CLI applications associated with this `Command`."""
@@ -86,8 +86,8 @@ class Web_Scan(Command):  #web_scan operation class
         with open(filename, mode='r', encoding='utf-8-sig') as csvfile:
             reader = csv.DictReader(csvfile, delimiter=",")
             for row in reader:
-                parameter_value_map[row['PARAMETER'].
-                                    lower()] = row['VALUE_EXECUTED']
+                parameter_value_map[
+                    row['PARAMETER'].lower()] = row['VALUE_EXECUTED']
 
         self.application = parameter_value_map['web_application']
         self.scan_rate = parameter_value_map['jitter'] or 0
@@ -110,7 +110,7 @@ class Web_Scan(Command):  #web_scan operation class
         self.clean_target_list = os.path.abspath(clean_target_list)
 
     def execute(
-            self
+        self
     ):  # Executes the web_scan command, currently only supports eyewitness
 
         web_port = str(self.scan_type)
@@ -148,8 +148,8 @@ class Port_Scan(Command):  # port_scan operation class
         with open(filename, mode='r', encoding='utf-8-sig') as csvfile:
             reader = csv.DictReader(csvfile, delimiter=",")
             for row in reader:
-                parameter_value_map[row['PARAMETER'].
-                                    lower()] = row['VALUE_EXECUTED']
+                parameter_value_map[
+                    row['PARAMETER'].lower()] = row['VALUE_EXECUTED']
 
         self.timestamp = '{:%Y-%m-%d_%H-%M-%S}'.format(datetime.datetime.now())
         self.application = parameter_value_map['application']
@@ -176,12 +176,13 @@ class Port_Scan(Command):  # port_scan operation class
     def execute(self):  # Executes the masscan execution call
         if self.application == Applications.MASSCAN.value:
 
-            command = str(
-                self.application + ' --max-retries=1 --banners --source-ip ' +
-                self.ip + ' --source-port 61000 --open -e ' + self.interface +
-                " -p " + self.ports + ' -iL ' + self.clean_target_list +
-                " --rate=" + self.scan_rate + " -oG " +
-                self.enumeration_output_file)
+            command = str(self.application +
+                          ' --max-retries=1 --banners --source-ip ' + self.ip +
+                          ' --source-port 61000 --open -e ' + self.interface +
+                          " -p " + self.ports + ' -iL ' +
+                          self.clean_target_list + " --rate=" +
+                          self.scan_rate + " -oG " +
+                          self.enumeration_output_file)
 
         print('Running "port_scan" operation')
         print()
@@ -220,12 +221,12 @@ class Port_Scan(Command):  # port_scan operation class
 
         #creats PORT.txt files with IPs
         #subprocess.call(str('grep "Ports:" '+self.enumeration_output_file+' | cut -d " " -f 4 | cut -d "/" -f1 | sort -u -k 1nbr > output/ports/ports.txt'), shell=True, universal_newlines=True)
-        subprocess.call(
-            str('grep "Ports:" ' + self.enumeration_output_file +
-                ' | cut -d " " -f 4 | cut -d "/" -f1 | sort -u > output/ports/ports.txt'
-                ),
-            shell=True,
-            universal_newlines=True)
+        subprocess.call(str(
+            'grep "Ports:" ' + self.enumeration_output_file +
+            ' | cut -d " " -f 4 | cut -d "/" -f1 | sort -u > output/ports/ports.txt'
+        ),
+                        shell=True,
+                        universal_newlines=True)
         port_list = open("output/ports/ports.txt")
         for i in (port_list):
             port_output_command = str(
@@ -233,8 +234,9 @@ class Port_Scan(Command):  # port_scan operation class
                 self.enumeration_output_file +
                 ' | cut -d " " -f 2 | cut -c1-15 | sort -t . -k 1,1n -k 2,2n -k 3,3n -k 4,4n > output/ports/'
                 + str(i.rstrip()) + '_.txt ')
-            subprocess.call(
-                port_output_command, shell=True, universal_newlines=False)
+            subprocess.call(port_output_command,
+                            shell=True,
+                            universal_newlines=False)
 
         #creats IP.txt files with open ports
         subprocess.call(
@@ -248,8 +250,9 @@ class Port_Scan(Command):  # port_scan operation class
                 i.rstrip()
             ) + ' ()" ' + self.enumeration_output_file + ' | cut -d ":" -f3-15 | sort -u  > output/hosts/' + str(
                 i.rstrip()) + '.txt'
-            subprocess.call(
-                ip_output_command, shell=True, universal_newlines=False)
+            subprocess.call(ip_output_command,
+                            shell=True,
+                            universal_newlines=False)
 
         #cleans output/hosts directory of unused or empy data files
         subprocess.call(
@@ -257,14 +260,12 @@ class Port_Scan(Command):  # port_scan operation class
             shell=True,
             universal_newlines=False)
         os.remove('input/ip_lists/web_scan_ip2.txt')
-        subprocess.call(
-            'sudo find output/hosts -size 0 -delete',
-            shell=True,
-            universal_newlines=True)
-        subprocess.call(
-            'sudo find output/ports -size 0 -delete',
-            shell=True,
-            universal_newlines=True)
+        subprocess.call('sudo find output/hosts -size 0 -delete',
+                        shell=True,
+                        universal_newlines=True)
+        subprocess.call('sudo find output/ports -size 0 -delete',
+                        shell=True,
+                        universal_newlines=True)
         #time.sleep(5)
 
         #capture XML data to import into MSF db_import   //  possibly own operation // import string from file
@@ -301,14 +302,22 @@ class Port_Scan(Command):  # port_scan operation class
 
 
 class Xml_Scan(Command):  # port_scan operation class
+    WEB_PORTS_TO_SCAN = (
+        ("tcp", "443"),
+        ("tcp", "80"),
+        ("tcp", "8000"),
+        ("tcp", "8080"),
+        ("tcp", "8443"),
+    )
+
     def __init__(self, clean_target_list_file, sitename):
         parameter_value_map = {}
         filename = os.path.abspath(OperationFiles.PORT_SCAN.value)
         with open(filename, mode='r', encoding='utf-8-sig') as csvfile:
             reader = csv.DictReader(csvfile, delimiter=",")
             for row in reader:
-                parameter_value_map[row['PARAMETER'].
-                                    lower()] = row['VALUE_EXECUTED']
+                parameter_value_map[
+                    row['PARAMETER'].lower()] = row['VALUE_EXECUTED']
 
         self.timestamp = '{:%Y-%m-%d_%H-%M-%S}'.format(datetime.datetime.now())
         self.application = parameter_value_map['application']
@@ -332,103 +341,126 @@ class Xml_Scan(Command):  # port_scan operation class
                 clean_target_list)
         self.clean_target_list = os.path.abspath(clean_target_list)
 
+    def parse_masscan_xml_for_ip_addresses(self, filename, target_protocol,
+                                           target_portid):
+        ip_addresses = set()
+
+        tree = ET.parse(filename)
+        root = tree.getroot()
+        hosts = root.findall("host")
+
+        for host in hosts:
+            ports = host.find("ports").findall("port")
+            for port in ports:
+                protocol = port.attrib.get("protocol")
+                portid = port.attrib.get("portid")
+                if protocol == target_protocol and portid == target_portid:
+                    address = host.find("address")
+                    ip_address = address.attrib.get("addr")
+                    ip_addresses.add(ipaddress.ip_address(ip_address))
+
+        return ip_addresses
+
+    def parse_masscan_xml_for_port_ip_address_mapping(self, filename):
+        port_ip_address_map = dict()
+
+        tree = ET.parse(filename)
+        root = tree.getroot()
+        hosts = root.findall("host")
+
+        for host in hosts:
+            ports = host.find("ports").findall("port")
+            for port in ports:
+                portid = port.attrib.get("portid")
+                port_ip_address_map.setdefault(portid, set())
+
+                address = host.find("address")
+                ip_address = address.attrib.get("addr")
+                port_ip_address_map[portid].add(
+                    ipaddress.ip_address(ip_address))
+
+        return port_ip_address_map
+
+    def parse_masscan_xml_for_ip_address_port_mapping(self, filename):
+        ip_address_port_map = dict()
+
+        tree = ET.parse(filename)
+        root = tree.getroot()
+        hosts = root.findall("host")
+
+        for host in hosts:
+            address = host.find("address")
+            ip_address = address.attrib.get("addr")
+
+            ip_address_port_map.setdefault(ip_address, list())
+
+            port = host.find("ports").find("port")
+            portid = port.attrib.get("portid")
+            state = port.find("state").attrib.get("state")
+            reason = port.find("state").attrib.get("reason")
+            reason_ttl = port.find("state").attrib.get("reason_ttl")
+            service = port.find("service")
+            service_name = service.attrib.get(
+                "name") if service is not None else None
+            service_banner = service.attrib.get(
+                "banner") if service is not None else None
+
+            all_fields = [
+                portid, state, reason, reason_ttl, service_name, service_banner
+            ]
+            valid_fields = [field for field in all_fields if field is not None]
+            line = ",".join(valid_fields)
+            ip_address_port_map[ip_address].append(line)
+
+        for ip_address in ip_address_port_map:
+            ip_address_port_map[ip_address].sort(key=lambda x: x.split(",")[0])
+
+        print(ip_address_port_map)
+        return ip_address_port_map
+
+    def write_output_to_file(self, filename, ip_addresses):
+        if isinstance(ip_addresses, set):
+            ip_addresses = list(ip_addresses)
+
+        ip_addresses.sort()
+
+        with open(filename, 'w') as out:
+            out.writelines("\n".join([str(x) for x in ip_addresses]))
+
     def execute(self):  # Executes the masscan execution call
         if self.application == Applications.MASSCAN.value:
 
-            command = str(
-                self.application + ' --max-retries=1 --banners --source-ip ' +
-                self.ip + ' --source-port 61000 --open -e ' + self.interface +
-                " -p " + self.ports + ' -iL ' + self.clean_target_list +
-                " --rate=" + self.scan_rate + " -oX output/xml/masscan.xml")
+            command = str(self.application +
+                          ' --max-retries=1 --banners --source-ip ' + self.ip +
+                          ' --source-port 61000 --open -e ' + self.interface +
+                          " -p " + self.ports + ' -iL ' +
+                          self.clean_target_list + " --rate=" +
+                          self.scan_rate + " -oX output/xml/masscan.xml")
 
-        print('Running "xml_scan" operation')
-        print()
-        #subprocess.check_call('find output/xml/ -type f -name "masscan.csv" -delete', shell=True, universal_newlines=True)
-        print(command)  #prints out masscan execution command
+        print('Running "xml_scan" operation', sep='\n\n')
+        print(command, sep='\n\n')
         subprocess.call(command, shell=True, universal_newlines=True)
-        print()
-        print("XML Scan Complete, output located in specter/output/ ")
-        #print()
+        print("XML Scan Complete, output located in specter/output/")
 
-        #converts masscan xml out to csv file
-        subprocess.check_call(
-            'python3 output/xml/masscan_xml_parser.py -f output/xml/masscan.xml -csv output/xml/masscan.csv',
-            shell=True,
-            universal_newlines=False)
+        all_ip_addresses = set()
+        for (protocol, portid) in self.WEB_PORTS_TO_SCAN:
+            ip_addresses = self.parse_masscan_xml_for_ip_addresses(
+                "output/xml/masscan.xml", protocol, portid)
+            all_ip_addresses = all_ip_addresses.union(ip_addresses)
+        self.write_output_to_file("input/ip_lists/web_scan_ip.txt",
+                                  all_ip_addresses)
 
-        #pull IPs from masscan csv file
-        #subprocess.check_call('grep "ipv4" output/xml/masscan.csv | cut -d "," -f1 | sort -u -t . -k 1,1n -k 2,2n -k 3,3n -k 4,4n > output/hosts/ip.txt ', shell=True, universal_newlines=False)
-        #pull open ports form masscan csv file
-        #subprocess.check_call('grep "ipv4" output/xml/masscan.csv | cut -d "," -f4 | sort -u > output/ports/ports.txt ', shell=True, universal_newlines=False)
+        port_ip_addresses_map = self.parse_masscan_xml_for_port_ip_address_mapping(
+            "output/xml/masscan.xml")
+        for (port, ip_addresses) in port_ip_addresses_map.items():
+            self.write_output_to_file("output/ports/%s.txt" % port,
+                                      ip_addresses)
 
-        #creates default target file for web_scan with IPs that have web ports open -- so be sorted to another file and passed to web_scan
-        subprocess.check_call(
-            'grep "tcp,443" output/xml/masscan.csv | cut -d "," -f1 | sort -u -t . -k 1,1n -k 2,2n -k 3,3n -k 4,4n > input/ip_lists/web_scan_ip2.txt',
-            shell=True,
-            universal_newlines=False)
-        subprocess.check_call(
-            'grep "tcp,80" output/xml/masscan.csv | cut -d "," -f1 | sort -u -t . -k 1,1n -k 2,2n -k 3,3n -k 4,4n >> input/ip_lists/web_scan_ip2.txt',
-            shell=True,
-            universal_newlines=False)
-        subprocess.check_call(
-            'grep "tcp,8000" output/xml/masscan.csv | cut -d "," -f1 | sort -u -t . -k 1,1n -k 2,2n -k 3,3n -k 4,4n >> input/ip_lists/web_scan_ip2.txt',
-            shell=True,
-            universal_newlines=False)
-        subprocess.check_call(
-            'grep "tcp,8080" output/xml/masscan.csv | cut -d "," -f1 | sort -u -t . -k 1,1n -k 2,2n -k 3,3n -k 4,4n >> input/ip_lists/web_scan_ip2.txt',
-            shell=True,
-            universal_newlines=False)
-        subprocess.check_call(
-            'grep "tcp,8443" output/xml/masscan.csv | cut -d "," -f1 | sort -u -t . -k 1,1n -k 2,2n -k 3,3n -k 4,4n >> input/ip_lists/web_scan_ip2.txt',
-            shell=True,
-            universal_newlines=False)
-
-        #creats PORT.txt files with IPs
-        subprocess.check_call(
-            'grep "ipv4" output/xml/masscan.csv | cut -d "," -f4 | sort -u > output/ports/xml_ports.txt ',
-            shell=True,
-            universal_newlines=False)
-        port_list = open("output/ports/xml_ports.txt")
-        for i in (port_list):
-            port_output_command = str(
-                'grep "tcp,' + str(i.rstrip()) +
-                '" output/xml/masscan.csv | cut -d "," -f1 | sort -u -t . -k 1,1n -k 2,2n -k 3,3n -k 4,4n > output/ports/'
-                + str(i.rstrip()) + '_.txt')
-            #print(port_output_command)
-            subprocess.check_call(
-                port_output_command, shell=True, universal_newlines=False)
-
-        #creats IP.txt files with open ports
-        subprocess.check_call(
-            'grep "ipv4" output/xml/masscan.csv | cut -d "," -f1 | sort -u -t . -k 1,1n -k 2,2n -k 3,3n -k 4,4n > output/hosts/xml_ips.txt ',
-            shell=True,
-            universal_newlines=False)
-        ip_list = open("output/hosts/xml_ips.txt")
-        for i in (ip_list):
-            ip_output_command = 'grep "' + str(
-                i.rstrip()
-            ) + ',ipv4" output/xml/masscan.csv | cut -d "," -f4-10 | sort -u  > /root/Desktop/specter/output/hosts/' + str(
-                i.rstrip()) + '.txt'
-            #print(ip_output_command)
-            subprocess.check_call(
-                ip_output_command, shell=True, universal_newlines=False)
-
-        #cleans output/hosts directory of unused or empy data files
-        subprocess.check_call(
-            'sudo sort -u -t . -k 1,1n -k 2,2n -k 3,3n -k 4,4n input/ip_lists/web_scan_ip2.txt | uniq > input/ip_lists/web_scan_ip.txt',
-            shell=True,
-            universal_newlines=False)
-        os.remove('input/ip_lists/web_scan_ip2.txt')
-        #os.remove('output/xml/masscan.csv')
-        subprocess.check_call(
-            'sudo find output/hosts -size 0 -delete',
-            shell=True,
-            universal_newlines=True)
-        subprocess.check_call(
-            'sudo find output/ports -size 0 -delete',
-            shell=True,
-            universal_newlines=True)
-        #time.sleep(5)
+        ip_addresses_port_map = self.parse_masscan_xml_for_ip_address_port_mapping(
+            "output/xml/masscan.xml")
+        for (ip_address, output) in ip_addresses_port_map.items():
+            self.write_output_to_file("output/hosts/%s.txt" % ip_address,
+                                      output)
 
     @property
     def ports(self):
@@ -511,8 +543,8 @@ class Clean_List(Command):
 
     @property
     def clean_target_list_output_file(self):  #creates output file name
-        return self._get_output_filename(
-            'clean_target_lists', extra_label='clean_ip_list')
+        return self._get_output_filename('clean_target_lists',
+                                         extra_label='clean_ip_list')
 
     def _get_output_filename(self, dirname, extra_label=None, ext='txt'):
         if self._sitename.endswith(os.extsep + ext):
@@ -636,7 +668,7 @@ def _init_web_scan_parser(subparsers):  #argument parser for web_scan operation
 
 
 def build_output_folder_structure(
-        output_directory
+    output_directory
 ):  #not called currently // creates the default output directories
     subdirectories = {
         os.path.abspath('%s/output/enumeration' % output_directory),
@@ -699,11 +731,10 @@ def main():
 
     print(INFO)
     parser = argparse.ArgumentParser(prog='specter.py')
-    subparsers = parser.add_subparsers(
-        title='subcommands',
-        description='Valid specter subcommands',
-        dest='subcommand',
-        required=True)
+    subparsers = parser.add_subparsers(title='subcommands',
+                                       description='Valid specter subcommands',
+                                       dest='subcommand',
+                                       required=True)
     _init_web_scan_parser(subparsers)
     _init_port_scan_parser(subparsers)
     _init_xml_scan_parser(subparsers)
