@@ -7,8 +7,8 @@ target_list_file_path = "input/target_list.txt"
 exclude_list_file_path = "input/exclude_list.txt"
 
 [xml_scan]
-masscan_ip = "10.0.0.200"
-interface = "en0"
+masscan_ip = "192.168.50.200"
+interface = "eth0"
 scan_rate = 3000
 ports = [ "445", "443", "8443", "8080" ]
 clean_target_list_file_path = "input/xml_clean_target_list.txt"

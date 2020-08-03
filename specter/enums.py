@@ -1,8 +1,6 @@
 from enum import Enum
 import os
 
-SPECTER_INPUT_OPERATION_DIR_PATH = 'input/operation'
-
 
 class Applications(Enum):
     MASSCAN = 'masscan'

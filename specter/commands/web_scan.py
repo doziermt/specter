@@ -34,22 +34,15 @@ class WebScan(Command):
 
     def execute(self):
         """Executes the web_scan command, currently only supports eyewitness."""
-        command = [
+        command = " ".join([
             self.APPLICATION, '--web', '--add-http-ports', self.ports,
             '--add-https-ports', self.ports, '--no-prompt', '--threads 4',
-            '--jitter', self.jitter, '-f', self.clean_target_list_file_path,
+            '--jitter',
+            str(self.jitter), '-f', self.clean_target_list_file_path,
             '-d output/web_reports/eyewitness'
-        ].join(' ')
+        ])
 
-        import pdb
-        pdb.set_trace()
+        #import pdb
+        #pdb.set_trace()
 
         self.run_command(command)
-
-        # print()
-        # print(web_command)  #Prints out the web_scan command that is running
-        # print()
-        # print(
-        #     "Web Scan Complete, output located in specter/output/web_reports/eyewitness/ "
-        # )
-        # print()
