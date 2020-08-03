@@ -1,0 +1,2 @@
+dynaconf==3.0.0
+inflection==0.5.0
