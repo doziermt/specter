@@ -10,20 +10,25 @@ class CleanList(Command):
 
     @property
     def xml_clean_target_list_file_path(self):
-        path = os.path.abspath(settings['xml_scan']['clean_target_list_file_path'])
-        self._validate_target_file_path(path, "[xml_scan].clean_target_list_file_path")
+        path = os.path.abspath(
+            settings['xml_scan']['clean_target_list_file_path'])
+        self._validate_target_file_path(
+            path, "[xml_scan].clean_target_list_file_path")
         return path
 
     @property
     def target_list_file_path(self):
         path = os.path.abspath(settings['clean_list']['target_list_file_path'])
-        self._validate_target_file_path(path, "[clean_list].target_list_file_path")
+        self._validate_target_file_path(path,
+                                        "[clean_list].target_list_file_path")
         return path
 
     @property
     def exclude_list_file_path(self):
-        path = os.path.abspath(settings['clean_list']['exclude_list_file_path'])
-        self._validate_target_file_path(path, "[clean_list].exclude_list_file_path")
+        path = os.path.abspath(
+            settings['clean_list']['exclude_list_file_path'])
+        self._validate_target_file_path(path,
+                                        "[clean_list].exclude_list_file_path")
         return path
 
     def __init__(self):
@@ -31,11 +36,8 @@ class CleanList(Command):
 
     def execute(self):
         command = " ".join([
-            self.APPLICATION, "-sL", "-n", "-iL",
-            self.target_list_file_path,
-            "--excludefile",
-            self.exclude_list_file_path,
-            "-oN",
+            self.APPLICATION, "-sL", "-n", "-iL", self.target_list_file_path,
+            "--excludefile", self.exclude_list_file_path, "-oN",
             self.xml_clean_target_list_file_path
         ])
         output = self.run_command(command)
@@ -58,4 +60,5 @@ class CleanList(Command):
         else:
             if not os.path.isfile(path):
                 raise FileNotFoundError(
-                    'The "%s" must reference a file, not a directory' % settings_name)
+                    'The "%s" must reference a file, not a directory' %
+                    settings_name)

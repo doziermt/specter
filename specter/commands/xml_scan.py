@@ -25,7 +25,8 @@ class XmlScan(Command):
 
     @property
     def web_clean_target_list_file_path(self):
-        path = os.path.abspath(settings['web_scan']['clean_target_list_file_path'])
+        path = os.path.abspath(
+            settings['web_scan']['clean_target_list_file_path'])
         self._validate_clean_target_list_file_path(path)
         return path
 
@@ -149,7 +150,8 @@ class XmlScan(Command):
     def execute(self):
         command = (
             "%s --max-retries=1 --banners --source-ip %s --source-port 61000 --open -e %s -p %s -iL %s --rate=%s -oX output/xml/masscan.xml"
-         ) % (self.APPLICATION, self.ip, self.interface, self.ports, self.xml_clean_target_list_file_path, self.scan_rate)
+        ) % (self.APPLICATION, self.ip, self.interface, self.ports,
+             self.xml_clean_target_list_file_path, self.scan_rate)
         self.run_command(command)
 
         all_ip_addresses = set()
@@ -182,4 +184,5 @@ class XmlScan(Command):
         else:
             if not os.path.isfile(path):
                 raise FileNotFoundError(
-                    'The "[general].clean_target_list_file_path" must reference a file, not a directory')
+                    'The "[general].clean_target_list_file_path" must reference a file, not a directory'
+                )

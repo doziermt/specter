@@ -32,25 +32,17 @@ class WebScan(Command):
     def jitter(self):
         return settings['web_scan']['jitter'] or 0
 
-    def execute(self):  
+    def execute(self):
         """Executes the web_scan command, currently only supports eyewitness."""
         command = [
-            self.APPLICATION,
-            '--web',
-            '--add-http-ports',
-            self.ports,
-            '--add-https-ports',
-            self.ports,
-            '--no-prompt',
-            '--threads 4',
-            '--jitter',
-            self.jitter,
-            '-f',
-            self.clean_target_list_file_path,
+            self.APPLICATION, '--web', '--add-http-ports', self.ports,
+            '--add-https-ports', self.ports, '--no-prompt', '--threads 4',
+            '--jitter', self.jitter, '-f', self.clean_target_list_file_path,
             '-d output/web_reports/eyewitness'
         ].join(' ')
 
-        import pdb; pdb.set_trace()
+        import pdb
+        pdb.set_trace()
 
         self.run_command(command)
 

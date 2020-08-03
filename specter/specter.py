@@ -26,12 +26,14 @@ sudo python3 <application> <operation> optional flags = -s <site_name.txt> -c <c
 sudo python3 specter.py web_scan	 
 '''
 
+
 def _init_clean_list_parser(subparsers):
     """Argument parser for clean_list operation"""
     clean_list_parser = subparsers.add_parser(
         Commands.CLEAN_LIST.value, help='Execute a clean list using nmap')
 
-def _init_xml_scan_parser( subparsers):
+
+def _init_xml_scan_parser(subparsers):
     """Argument parser for xml_scan operation"""
     port_scan_parser = subparsers.add_parser(
         Commands.XML_SCAN.value, help='Execute a xml scan using masscan')
@@ -41,6 +43,7 @@ def _init_web_scan_parser(subparsers):
     """Argument parser for web_scan operation"""
     web_scan_parser = subparsers.add_parser(
         Commands.WEB_SCAN.value, help='Execute a web scan using eyewitness')
+
 
 def parse_args(parser):
     args = parser.parse_args()
@@ -54,9 +57,11 @@ def parse_args(parser):
     elif args.subcommand == Commands.XML_SCAN.value:
         command = XmlScan()
     else:
-        raise RuntimeError("The sub-command '%s' is not supported" % args.subcommand)
+        raise RuntimeError("The sub-command '%s' is not supported" %
+                           args.subcommand)
 
     command.execute()
+
 
 def build_output_folder_structure(output_directory=os.getcwd()):
     subdirectories = {
@@ -70,6 +75,7 @@ def build_output_folder_structure(output_directory=os.getcwd()):
         if not os.path.isdir(directory):
             print('Creating directories: %s' % directory)
         os.makedirs(directory, exist_ok=True)
+
 
 def main():
     print(INFO)
