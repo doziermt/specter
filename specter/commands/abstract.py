@@ -51,8 +51,10 @@ class Command(object, metaclass=ABCMeta):
                 % (op_name, command, output.returncode, cls.APPLICATION,
                    application_error_msg))
 
-        print("Captured %s output:\n%s" %
-              (cls.APPLICATION, output.stdout or output.stderr,))
+        print("Captured %s output:\n%s" % (
+            cls.APPLICATION,
+            output.stdout or output.stderr,
+        ))
         print("Successfully finished '%s' operation." % op_name)
 
         return output
