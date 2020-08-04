@@ -42,11 +42,20 @@ class CleanList(Command):
         ])
         output = self.run_command(command)
 
+        print()
+        print(output.stdout)
+        print()
+        '''with open(self.xml_clean_target_list_file_path, 'r') as clean_output:
+            for line in clean_output:
+                relevant_output = line.split("\n")[1:-2]
+                #formatted_output = relevant_output.split(' ')[-1] + '\n' 
+                #for line in relevant_output
+                clean_output.writelines(relevant_output)'''
+
         relevant_output = output.stdout.split("\n")[1:-2]
         formatted_output = [
             line.split(' ')[-1] + '\n' for line in relevant_output
         ]
-
         with open(self.xml_clean_target_list_file_path, 'w') as outfile:
             outfile.writelines(formatted_output)
 

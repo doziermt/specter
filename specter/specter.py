@@ -8,22 +8,19 @@ from specter.enums import Applications, Commands
 global INFO
 
 INFO = '''
+
 		SPECTER RECON TOOL 
 ==================================================
-Version 0.1
+Version 1.0
 
 EXECUTION
-sudo python3 <application> <operation> optional flags = -s <site_name.txt> -t <target_list.txt> -e <exclution_list.txt> -h <help>
-sudo python3 specter.py clean_list -s ea60test
+sudo python3 <application> <operation> 
+tox -e specter -- clean_list
 
-sudo python3 <application> <operation> optional flags = -s <site_name.txt> -c <clean_target_list.txt>
-sudo python3 specter.py port_scan 
+tox -e specter -- xml_scan
 
-sudo python3 <application> <operation> optional flags = -s <site_name.txt> -c <clean_target_list.txt>
-sudo python3 specter.py xml_scan 
-
-sudo python3 <application> <operation> optional flags = -s <site_name.txt> -c <clean_target_list.txt>
-sudo python3 specter.py web_scan	 
+tox -e specter -- web_scan
+	 
 '''
 
 

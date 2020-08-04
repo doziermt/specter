@@ -39,11 +39,22 @@ class Command(object, metaclass=ABCMeta):
             'Calling %s via subprocess.run() with the following command: %s' %
             (cls.APPLICATION, command))
         print()
-
-        output = subprocess.run(command,
+        '''output = subprocess.run(command,
                                 shell=True,
+                                check=True,
                                 universal_newlines=True,
-                                capture_output=True)
+                                capture_output=True)'''
+
+        output = subprocess.run(
+            command,  #works for xml_scan and web_scan   error on clean_list
+            shell=True,
+            check=True,
+            universal_newlines=True,
+            stdout=True,
+            stderr=True)
+
+        #subprocess.Popen.stdout(output)
+
         if output.returncode != 0:
             application_error_msg = output.stderr or output.stdout
             raise exceptions.SubprocessExecutionError(
@@ -55,6 +66,7 @@ class Command(object, metaclass=ABCMeta):
             cls.APPLICATION,
             output.stdout or output.stderr,
         ))
+
         print("Successfully finished '%s' operation." % op_name)
 
         return output
