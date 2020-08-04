@@ -11,7 +11,7 @@ def _build_output_directory_hierarchy():
 def validate_settings():
     settings = Dynaconf(environments=False,
                         load_dotenv=False,
-                        settings_files=['../settings.toml'],
+                        settings_files=[os.path.join(os.getcwd(), 'settings.toml')],
                         validators=[
                             Validator('general', must_exist=True),
                             Validator('general.sitename',
