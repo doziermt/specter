@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 from specter.commands import Command
 from specter.config import settings
@@ -35,29 +36,19 @@ class CleanList(Command):
         super().__init__()
 
     def execute(self):
-        command = " ".join([
+        _, temporary_file = tempfile.mkstemp(prefix='specter')
+        command = [
             self.APPLICATION, "-sL", "-n", "-iL", self.target_list_file_path,
-            "--excludefile", self.exclude_list_file_path, "-oN",
-            self.xml_clean_target_list_file_path
-        ])
-        output = self.run_command(command)
-
-        print()
-        print(output.stdout)
-        print()
-        '''with open(self.xml_clean_target_list_file_path, 'r') as clean_output:
-            for line in clean_output:
-                relevant_output = line.split("\n")[1:-2]
-                #formatted_output = relevant_output.split(' ')[-1] + '\n' 
-                #for line in relevant_output
-                clean_output.writelines(relevant_output)'''
-
-        relevant_output = output.stdout.split("\n")[1:-2]
-        formatted_output = [
-            line.split(' ')[-1] + '\n' for line in relevant_output
+            "--excludefile", self.exclude_list_file_path, "-oN", temporary_file
         ]
+        self.run_command(command)
+
+        with open(temporary_file, 'r') as readfile:
+            relevant_lines = readfile.readlines()[1:-2]
+            formatted_lines = [line.split(' ')[-1] for line in relevant_lines]
+
         with open(self.xml_clean_target_list_file_path, 'w') as outfile:
-            outfile.writelines(formatted_output)
+            outfile.writelines(formatted_lines)
 
     def _validate_target_file_path(self, path, settings_name):
         if not os.path.exists(path):

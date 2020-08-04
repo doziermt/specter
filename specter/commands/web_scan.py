@@ -41,8 +41,4 @@ class WebScan(Command):
             str(self.jitter), '-f', self.clean_target_list_file_path,
             '-d output/web_reports/eyewitness'
         ])
-
-        #import pdb
-        #pdb.set_trace()
-
         self.run_command(command)

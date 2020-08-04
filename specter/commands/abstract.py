@@ -28,6 +28,14 @@ class Command(object, metaclass=ABCMeta):
 
     @classmethod
     def run_command(cls, command):
+        """Runs a subprocess command using `subprocess.run`.
+
+        The `stdout` of the process is emitted to the terminal, but `stderr` is piped back to subprocess so that
+        error handling can be performed.
+
+        :param list command: A command to run in a subprocess.
+        :returns: None
+        """
         if not command:
             raise TypeError(
                 "The command passed to %s.run_command must be provided" %
@@ -39,37 +47,28 @@ class Command(object, metaclass=ABCMeta):
             'Calling %s via subprocess.run() with the following command: %s' %
             (cls.APPLICATION, command))
         print()
-        '''output = subprocess.run(command,
-                                shell=True,
-                                check=True,
-                                universal_newlines=True,
-                                capture_output=True)'''
 
-        output = subprocess.run(
-            command,  #works for xml_scan and web_scan   error on clean_list
-            shell=True,
-            check=True,
-            universal_newlines=True,
-            stdout=True,
-            stderr=True)
+        proc = None
 
-        #subprocess.Popen.stdout(output)
-
-        if output.returncode != 0:
-            application_error_msg = output.stderr or output.stdout
+        try:
+            use_shell = isinstance(command, str)
+            proc = subprocess.run(command,
+                                  shell=use_shell,
+                                  check=True,
+                                  universal_newlines=True,
+                                  stderr=subprocess.PIPE)
+        except subprocess.SubprocessError as e:
             raise exceptions.SubprocessExecutionError(
                 "Failed to execute operation '%s'. Command '%s' returned non-zero exit status %d. Error from %s:\n\n%s"
-                % (op_name, command, output.returncode, cls.APPLICATION,
-                   application_error_msg))
-
-        print("Captured %s output:\n%s" % (
-            cls.APPLICATION,
-            output.stdout or output.stderr,
-        ))
+                % (op_name, command, e.returncode, cls.APPLICATION, e.stderr))
+        finally:
+            if proc is not None and proc.returncode != 0:
+                raise exceptions.SubprocessExecutionError(
+                    "Failed to execute operation '%s'. Command '%s' returned non-zero exit status %d. Error from %s:\n\n%s"
+                    % (op_name, command, proc.returncode, cls.APPLICATION,
+                       proc.stderr))
 
         print("Successfully finished '%s' operation." % op_name)
-
-        return output
 
     @abstractmethod
     def __init__(self):

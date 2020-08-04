@@ -11,16 +11,13 @@ INFO = '''
 
 		SPECTER RECON TOOL 
 ==================================================
-Version 1.0
+Version 0.1
 
 EXECUTION
-sudo python3 <application> <operation> 
+
 tox -e specter -- clean_list
-
 tox -e specter -- xml_scan
-
 tox -e specter -- web_scan
-	 
 '''
 
 
@@ -44,7 +41,6 @@ def _init_web_scan_parser(subparsers):
 
 def parse_args(parser):
     args = parser.parse_args()
-    build_output_folder_structure()
 
     command = None
     if args.subcommand == Commands.CLEAN_LIST.value:
@@ -85,7 +81,8 @@ def main():
     _init_xml_scan_parser(subparsers)
     _init_clean_list_parser(subparsers)
     parse_args(parser)
+    build_output_folder_structure()
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

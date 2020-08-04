@@ -148,10 +148,13 @@ class XmlScan(Command):
             out.writelines("\n".join([str(x) for x in ip_addresses]))
 
     def execute(self):
-        command = (
-            "%s --max-retries=1 --banners --source-ip %s --source-port 61000 --open -e %s -p %s -iL %s --rate=%s -oX output/xml/masscan.xml"
-        ) % (self.APPLICATION, self.ip, self.interface, self.ports,
-             self.xml_clean_target_list_file_path, self.scan_rate)
+        command = " ".join([
+            self.APPLICATION, "--interactive", "--max-retries=1", "--banners",
+            "--source-ip", self.ip, "--source-port 61000", "--open", "-e",
+            self.interface, "-p", self.ports, "-iL",
+            self.xml_clean_target_list_file_path,
+            "--rate=%d" % self.scan_rate, "-oX output/xml/masscan.xml"
+        ])
         self.run_command(command)
 
         all_ip_addresses = set()
