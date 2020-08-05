@@ -29,7 +29,8 @@ class XmlScan(Command):
     def web_clean_target_list_file_path(self):
         path = os.path.abspath(
             settings['web_scan']['clean_target_list_file_path'])
-        self.validate_target_file_path(path, "[web_scan].clean_target_list_file_path")
+        self.validate_target_file_path(
+            path, "[web_scan].clean_target_list_file_path")
         return path
 
     @property
