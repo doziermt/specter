@@ -3,48 +3,84 @@
 **NOTE:**
 
 > Currenlty Tested on KALI 2020.2
-> target.txt format 192.168.0.1-254 will skip all addresses in the range that end in .0 or .255
-> target.txt format 192,168.0.0/24 will give the entire address range including .0 and .255
+
+Specter Recon Tool is a [KALI Linux](https://www.kali.org/) tool for...
 
 #### Contents
 
 - [Prerequisites](#prerequisites)
-- [Minimum Steps to Execution](#minimum-steps-to-execution)
-- [Execution](#execution)
-- [Developer Tools](#developer-tools)
+- [Getting Started](#getting-started)
+- [Supported Operations](#supported-operations)
+- [Developer Guide](#developer-guide)
 
 ## Prerequisites
 
-- Must run as root for web_scan operation to work 
-- Must have nmap, masscan, eyewitness installed
-- Check file permissions - input files are 777, 655, 600
+Specter should ideally be run on [KALI Linux](https://www.kali.org/). Specter uses the following **required**
+3rd-party scanning tools (that come pre-installed on KALI):
 
-## Minimum Steps to Execution
+- [Nmap](https://nmap.org/) for generating a "clean target list"
+- [Masscan](https://github.com/robertdavidgraham/masscan) for performing port scan operations efficiently
+- [Eyewitness](https://github.com/FortyNorthSecurity/EyeWitness) for performing a web security scan
 
-* step 1 - update /input/ip_list/target.txt
-* step 2 - update /input/ip_list/exclude.txt
-* step 3 - update /input/operation/scan.csv with your network adapter
-* step 3 - set masscan_ip in /input/operation/scan.csv to an IP on the target subnet **NOT** the same as the scanning network adapter 
+If applicable, please follow the links above for information on installing each tool.
 
-NOTE: If a VPN is used to scan, the VPN adapter IP must match masscan_ip and banners cannot be captured
+## Getting Started
 
-## Execution
+WIP
+
+### Input Files
+
+WIP - Need context.
+
+> target_list.txt format 192.168.0.1-254 will skip all addresses in the range that end in .0 or .255
+> target_list.txt format 192,168.0.0/24 will give the entire address range including .0 and .255
+
+### Output Files
+
+WIP
+
+## Supported Operations
+
+* `clean_list`: Generates a "clean target list" file, which enumerates the IP addresses to scan using `masscan`
+* `xml_scan`: WIP
+* `web_scan`: WIP
+
+## Developer Guide
+
+### Dev Environment - Setup
+
+1. Install Python 3: https://www.python.org/downloads/
+2. Install `pip`: https://pip.pypa.io/en/stable/installing/
+3. Install `tox` using `pip` by running `pip install tox` in your terminal
+
+### Dev Environment - Running Specter CLI
+
+To run any of the [Supported Operations](#supported-operations), use `tox` as the entrypoint:
 
 ```
-sudo python3 <application> <operation> optional flags = -s <site_name.txt> -t <target_list.txt> -e <exclution_list.txt> -h <help>
-sudo python3 specter.py clean_list 
-
-sudo python3 <application> <operation> optional flags = -s <site_name.txt> -c <clean_target_list.txt>
-sudo python3 specter.py port_scan 
-
-sudo python3 <application> <operation> optional flags = -s <site_name.txt> -c <clean_target_list.txt>
-sudo python3 specter.py web_scan	 
+tox -e specter -- <COMMAND>
 ```
 
-## Developer Tools
+Examples:
+
+* To run `clean_list`:
+
+  > tox -e specter -- clean_list
+
+* To run `xml_scan`:
+
+  > tox -e specter -- xml_scan
+
+* To run `web_scan`:
+
+  > tox -e specter -- web_scan
+
+### Dev Environment - Tools
 
 This project makes use of [tox](https://tox.readthedocs.io/en/latest/) to facilitate testing for developers.
 The following tox commands can be used:
 
 * `tox -e fmt`: Formats the Python project code using the Google linter tool, [yapf](https://github.com/google/yapf)
 * `tox -e lint`: Checks that the Python project code passes `yapf` linter checks
+* `tox -e validate-config <CONFIG_FILE_PATH>`: Validates the [TOML](https://github.com/toml-lang/toml) configuration file specified by `<CONFIG_FILE_PATH>`
+* `tox -e validate-sample-config`: Validates the sample [TOML](https://github.com/toml-lang/toml) configuration file located underneath `samples/settings.sample.toml`
