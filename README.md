@@ -38,30 +38,30 @@ A sample configuration file exists underneath the relative path `samples/setting
 
 ### Input Files
 
-* `clean_list`
+* `clean_list Operation`
 * `target_list.txt`: List of IPs or IP ranges to be scanned NOTE: 192.168.0.1-254 will scan .1 to .254 NOTE: 192,168.0.0/24 will scan .0 to .255
 * `exclude _list.txt`: List of IPs or IP ranges NOT to scan
 * `settings.toml`: Configuration file of operational settings to read in
 
-* `xml_scan`
+* `xml_scan Operation`
 * `xml_clean_target_list.txt`: List of IPs or IP ranges to scan with excluded IPs removed
 * `settings.toml`: Configuration file of operational settings to read in
 
-* `web_scan`
+* `web_scan Operation`
 * `web_clean_target.list.txt`: List of IPs with ports 80,443,8000,8080,8443 open from `masscan.xml`
 * `settings.toml`: Configuration file of operational settings to read in 
 
 ### Output Files
 
-* `clean_list`
+* `clean_list Operation`
 * `input/xml_clean_target_list.txt`: creates a list of IPs or IP ranges to scan with excluded IPs removed
 
-* `xml_scan`
+* `xml_scan Operation`
 * `output/xml/masscan.xml`: masscan output file saved to output/xml
 * `output/ports/`: port.txt files with lists of IPs with port found open from masscan.xml
 * `output/hosts/`: IP.txt files with lists of port data found open from masscan.xml
 
-* `web_scan`
+* `web_scan Operation`
 * `ouput/web_reports/Eyewitness`: masscan output file saved to output/xml
 
 ## Supported Operations
