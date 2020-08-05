@@ -17,7 +17,7 @@ jitter = 0
 ports = [ "80,443,8000,8080,8443"]
 
 [xml_scan]
-# (required) The masscan IP is the source IP for banner grabbing, use an used address in the scan range. NOTE: if a VPN is in use the scanning adapter IP must be used.
+# (required) The masscan IP is the source IP for banner grabbing, use an unused address in the scan range. NOTE: if a VPN is in use the scanning adapter IP must be used.
 masscan_ip = "192.168.50.200"
 # (required) The interface is the network adapter used for scanning.
 interface = "eth0"
