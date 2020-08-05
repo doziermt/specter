@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 import datetime
+import os
 import subprocess
 
 import inflection
@@ -64,6 +65,30 @@ class Command(object, metaclass=ABCMeta):
                 % (op_name, command, e.returncode))
 
         print("Successfully finished '%s' operation." % op_name)
+
+    @classmethod
+    def validate_target_file_path(cls, path, settings_alias):
+        """Creates the file at ``path`` if it doesn't exist or else validates that it isn't a directory
+        and the user has permissons to read it.
+        """
+
+        # If the file doesn't exist, quickly create it.
+        # Also, if the file does already exist, make sure that it is not a directory.
+        if not os.path.exists(path):
+            try:
+                os.utime(path, None)
+            except OSError:
+                with open(path, 'a'):
+                    pass
+        else:
+            if not os.path.isfile(path):
+                raise FileNotFoundError(
+                    'Failed to locate file: The "%s" option in settings.toml must reference a file, not a directory'
+                    % settings_alias)
+            if not os.access(path, os.R_OK):
+                raise IOError(
+                    'Failed to read file: The "%s" option in settings.toml must be a readable file'
+                    % settings_alias)
 
     @abstractmethod
     def __init__(self):
