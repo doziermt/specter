@@ -29,7 +29,7 @@ class XmlScan(Command):
     def web_clean_target_list_file_path(self):
         path = os.path.abspath(
             settings['web_scan']['clean_target_list_file_path'])
-        self._validate_clean_target_list_file_path(path)
+        self.validate_target_file_path(path, "[web_scan].clean_target_list_file_path")
         return path
 
     @property
@@ -149,19 +149,6 @@ class XmlScan(Command):
 
         with open(filename, 'w') as out:
             out.writelines("\n".join([str(x) for x in ip_addresses]))
-
-    def _validate_clean_target_list_file_path(self, path):
-        if not os.path.exists(path):
-            try:
-                os.utime(path, None)
-            except OSError:
-                with open(path, 'a'):
-                    pass
-        else:
-            if not os.path.isfile(path):
-                raise FileNotFoundError(
-                    'The "[general].clean_target_list_file_path" must reference a file, not a directory'
-                )
 
     def _generate_output_files_from_masscan_xml(self):
         all_ip_addresses = set()
