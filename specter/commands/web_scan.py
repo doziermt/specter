@@ -38,7 +38,7 @@ class WebScan(Command):
             self.APPLICATION, '--web', '--add-http-ports', self.ports,
             '--add-https-ports', self.ports, '--no-prompt', '--threads 4',
             '--jitter',
-            str(self.jitter), '-f', self.clean_target_list_file_path,
+            '%s' % self.jitter, '-f', self.clean_target_list_file_path,
             '-d output/web_reports/eyewitness'
         ])
         self.run_command(command)

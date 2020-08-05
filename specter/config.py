@@ -55,10 +55,9 @@ def validate_settings(config_file_name='settings.toml'):
 
 
 if __name__ == '__main__':
-    # Validate the sample config file if calling this via tox.
+    # Validate the config file provided from the CLI if this script is called from there.
     try:
-        sample_conf_rel_path = 'samples/settings.sample.toml'
-        validate_settings(sample_conf_rel_path)
+        validate_settings(sys.argv[1])
     except ValidationError as e:
         tb = sys.exc_info()[2]
         traceback.print_exception(e.__class__, e, tb, limit=2, file=sys.stdout)
