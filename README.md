@@ -50,8 +50,8 @@ WIP
 ## Supported Operations
 
 * `clean_list`: Generates a "clean target list" file, which enumerates the IP addresses to scan using `masscan`
-* `xml_scan`: WIP
-* `web_scan`: WIP
+* `xml_scan`: Scans the IPs from the "clean target list" file with `masscan` and creats an XML ouput file in ouput/xml, "web clean target list" for scanning with `eyewitness`, output/host and output/ports directory banner data 
+* `web_scan`: Scans the "web clean target list" with `eyewitness` and creates defaut output 
 
 ## Developer Guide
 
