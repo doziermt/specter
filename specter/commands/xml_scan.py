@@ -19,6 +19,8 @@ class XmlScan(Command):
         ("tcp", "8443"),
     )
 
+    MASSCAN_XML_OUTPUT_PATH = 'output/xml/masscan.xml'
+
     @property
     def sitename(self):
         return settings.general.sitename
@@ -39,7 +41,8 @@ class XmlScan(Command):
         if not os.path.exists(os.path.abspath(path)):
             raise FileNotFoundError(
                 "Could not find [xml_scan].clean_target_list_file_path. "
-                "Please run clean_list first before running xml_scan.")
+                "Please run \"clean_list\" operation first before running \"xml_scan\"."
+            )
         return os.path.abspath(path)
 
     @property
@@ -62,8 +65,8 @@ class XmlScan(Command):
     def __init__(self):
         super().__init__()
 
-    def parse_masscan_xml_for_ip_addresses(self, filename, target_protocol,
-                                           target_portid):
+    def _parse_masscan_xml_for_ip_addresses(self, filename, target_protocol,
+                                            target_portid):
         ip_addresses = set()
 
         tree = ET.parse(filename)
@@ -82,7 +85,7 @@ class XmlScan(Command):
 
         return ip_addresses
 
-    def parse_masscan_xml_for_port_ip_address_mapping(self, filename):
+    def _parse_masscan_xml_for_port_ip_address_mapping(self, filename):
         port_ip_address_map = dict()
 
         tree = ET.parse(filename)
@@ -102,7 +105,7 @@ class XmlScan(Command):
 
         return port_ip_address_map
 
-    def parse_masscan_xml_for_ip_address_port_mapping(self, filename):
+    def _parse_masscan_xml_for_ip_address_port_mapping(self, filename):
         ip_address_port_map = dict()
 
         tree = ET.parse(filename)
@@ -138,7 +141,7 @@ class XmlScan(Command):
 
         return ip_address_port_map
 
-    def write_output_to_file(self, filename, ip_addresses):
+    def _write_output_to_file(self, filename, ip_addresses):
         if isinstance(ip_addresses, set):
             ip_addresses = list(ip_addresses)
 
@@ -146,36 +149,6 @@ class XmlScan(Command):
 
         with open(filename, 'w') as out:
             out.writelines("\n".join([str(x) for x in ip_addresses]))
-
-    def execute(self):
-        command = " ".join([
-            self.APPLICATION, "--interactive", "--max-retries=1", "--banners",
-            "--source-ip", self.ip, "--source-port 61000", "--open", "-e",
-            self.interface, "-p", self.ports, "-iL",
-            self.xml_clean_target_list_file_path,
-            "--rate=%d" % self.scan_rate, "-oX output/xml/masscan.xml"
-        ])
-        self.run_command(command)
-
-        all_ip_addresses = set()
-        for (protocol, portid) in self.WEB_PORTS_TO_SCAN:
-            ip_addresses = self.parse_masscan_xml_for_ip_addresses(
-                "output/xml/masscan.xml", protocol, portid)
-            all_ip_addresses = all_ip_addresses.union(ip_addresses)
-        self.write_output_to_file(self.web_clean_target_list_file_path,
-                                  all_ip_addresses)
-
-        port_ip_addresses_map = self.parse_masscan_xml_for_port_ip_address_mapping(
-            "output/xml/masscan.xml")
-        for (port, ip_addresses) in port_ip_addresses_map.items():
-            self.write_output_to_file("output/ports/%s.txt" % port,
-                                      ip_addresses)
-
-        ip_addresses_port_map = self.parse_masscan_xml_for_ip_address_port_mapping(
-            "output/xml/masscan.xml")
-        for (ip_address, output) in ip_addresses_port_map.items():
-            self.write_output_to_file("output/hosts/%s.txt" % ip_address,
-                                      output)
 
     def _validate_clean_target_list_file_path(self, path):
         if not os.path.exists(path):
@@ -189,3 +162,35 @@ class XmlScan(Command):
                 raise FileNotFoundError(
                     'The "[general].clean_target_list_file_path" must reference a file, not a directory'
                 )
+
+    def _generate_output_files_from_masscan_xml(self):
+        all_ip_addresses = set()
+        for (protocol, portid) in self.WEB_PORTS_TO_SCAN:
+            ip_addresses = self._parse_masscan_xml_for_ip_addresses(
+                self.MASSCAN_XML_OUTPUT_PATH, protocol, portid)
+            all_ip_addresses = all_ip_addresses.union(ip_addresses)
+        self._write_output_to_file(self.web_clean_target_list_file_path,
+                                   all_ip_addresses)
+
+        port_ip_addresses_map = self._parse_masscan_xml_for_port_ip_address_mapping(
+            self.MASSCAN_XML_OUTPUT_PATH)
+        for (port, ip_addresses) in port_ip_addresses_map.items():
+            self._write_output_to_file("output/ports/%s.txt" % port,
+                                       ip_addresses)
+
+        ip_addresses_port_map = self._parse_masscan_xml_for_ip_address_port_mapping(
+            self.MASSCAN_XML_OUTPUT_PATH)
+        for (ip_address, output) in ip_addresses_port_map.items():
+            self._write_output_to_file("output/hosts/%s.txt" % ip_address,
+                                       output)
+
+    def execute(self):
+        command = " ".join([
+            self.APPLICATION, "--max-retries=1", "--banners", "--source-ip",
+            self.ip, "--source-port 61000", "--open", "-e", self.interface,
+            "-p", self.ports, "-iL", self.xml_clean_target_list_file_path,
+            "--rate=%d" % self.scan_rate,
+            "-oX %s" % self.MASSCAN_XML_OUTPUT_PATH
+        ])
+        self.run_command(command)
+        self._generate_output_files_from_masscan_xml()

@@ -8,10 +8,12 @@ from specter import exceptions
 
 class Command(object, metaclass=ABCMeta):
     """Abstract base class that all commands should inherit from."""
+    """All sub-classes must specify this. Examples include ``Applications.NMAP.value`` or ``Applications.MASSCAN.value``."""
     APPLICATION = None
 
     @classmethod
     def validate_binary(cls):
+        """Validates that the application binary specified by `self.APPLICATION` exists in the system."""
         if cls.APPLICATION is None:
             raise TypeError("APPLICATION must be defined for class: %s" %
                             cls.__name__)
@@ -28,9 +30,9 @@ class Command(object, metaclass=ABCMeta):
 
     @classmethod
     def run_command(cls, command):
-        """Runs a subprocess command using `subprocess.run`.
+        """Runs a subprocess command using ``subprocess.run``.
 
-        The `stdout` of the process is emitted to the terminal, but `stderr` is piped back to subprocess so that
+        The ``stdout`` of the process is emitted to the terminal, but ``stderr`` is piped back to subprocess so that
         error handling can be performed.
 
         :param list command: A command to run in a subprocess.
@@ -55,27 +57,31 @@ class Command(object, metaclass=ABCMeta):
             proc = subprocess.run(command,
                                   shell=use_shell,
                                   check=True,
-                                  universal_newlines=True,
-                                  stderr=subprocess.PIPE)
+                                  universal_newlines=True)
         except subprocess.SubprocessError as e:
             raise exceptions.SubprocessExecutionError(
-                "Failed to execute operation '%s'. Command '%s' returned non-zero exit status %d. Error from %s:\n\n%s"
-                % (op_name, command, e.returncode, cls.APPLICATION, e.stderr))
-        finally:
-            if proc is not None and proc.returncode != 0:
-                raise exceptions.SubprocessExecutionError(
-                    "Failed to execute operation '%s'. Command '%s' returned non-zero exit status %d. Error from %s:\n\n%s"
-                    % (op_name, command, proc.returncode, cls.APPLICATION,
-                       proc.stderr))
+                "Failed to execute operation '%s'. Command '%s' returned non-zero exit status %d."
+                % (op_name, command, e.returncode))
 
         print("Successfully finished '%s' operation." % op_name)
 
     @abstractmethod
     def __init__(self):
+        """Constructor for sub-classes of ``Command``.
+        All sub-classes must implement this and call ``super().__init__()``.
+
+        Example::
+
+            class CustomSampleCommand(Command):
+                def __init__(self):
+                    super().__init__()
+        """
         self.timestamp = '{:%Y-%m-%d_%H-%M-%S}'.format(datetime.datetime.now())
         self.validate_binary()
 
     @abstractmethod
     def execute(self):
-        """Method for executing the CLI applications associated with this `Command`."""
+        """Method for executing the CLI applications associated with this ``Command``.
+        All sub-classes must implement this.
+        """
         pass

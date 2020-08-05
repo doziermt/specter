@@ -8,16 +8,42 @@ from specter.enums import Applications, Commands
 global INFO
 
 INFO = '''
+              ...                            
+             ;::::;                           
+           ;::::; :;                          
+         ;:::::'   :;                         
+        ;:::::;     ;.                        
+       ,:::::'       ;           OOO\         
+       ::::::;       ;          OOOOO\        
+       ;:::::;       ;         OOOOOOOO       
+      ,;::::::;     ;'         / OOOOOOO      
+    ;:::::::::`. ,,,;.        /  / DOOOOOO    
+  .';:::::::::::::::::;,     /  /     DOOOO   
+ ,::::::;::::::;;;;::::;,   /  /        DOOO  
+;`::::::`'::::::;;;::::: ,#/  /          DOOO 
+:`:::::::`;::::::;;::: ;::#  /            DOOO
+::`:::::::`;:::::::: ;::::# /              DOO
+`:`:::::::`;:::::: ;::::::#/               DOO
+ :::`:::::::`;; ;:::::::::##                OO
+ ::::`:::::::`;::::::::;:::#                OO
+ `:::::`::::::::::::;'`:;::#                O 
+  `:::::`::::::::;' /  / `:#                  
+   ::::::`:::::;'  /  /   `#
 
-		SPECTER RECON TOOL 
-==================================================
+=================================================
+* SPECTER RECON TOOL - KALI LINUX SECURITY TOOL *
+=================================================
+
+~~~~~~~~~~~
 Version 0.1
+~~~~~~~~~~~
 
-EXECUTION
+EXECUTION STEPS
+---------------
 
-tox -e specter -- clean_list
-tox -e specter -- xml_scan
-tox -e specter -- web_scan
+1) tox -e specter -- clean_list
+2) tox -e specter -- xml_scan
+3) tox -e specter -- web_scan
 '''
 
 
