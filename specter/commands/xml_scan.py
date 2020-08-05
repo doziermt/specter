@@ -11,6 +11,7 @@ from specter.enums import Applications
 class XmlScan(Command):
     APPLICATION = Applications.MASSCAN.value
 
+    # TODO: Use settings.toml configuration option for the ports to search for in the masscan.xml file
     WEB_PORTS_TO_SCAN = (
         ("tcp", "443"),
         ("tcp", "80"),
@@ -65,12 +66,9 @@ class XmlScan(Command):
     def __init__(self):
         super().__init__()
 
-    def _parse_masscan_xml_for_ip_addresses(self, filename, target_protocol,
+    def _parse_masscan_xml_for_ip_addresses(self, root, target_protocol,
                                             target_portid):
         ip_addresses = set()
-
-        tree = ET.parse(filename)
-        root = tree.getroot()
         hosts = root.findall("host")
 
         for host in hosts:
@@ -85,11 +83,8 @@ class XmlScan(Command):
 
         return ip_addresses
 
-    def _parse_masscan_xml_for_port_ip_address_mapping(self, filename):
+    def _parse_masscan_xml_for_port_ip_address_mapping(self, root):
         port_ip_address_map = dict()
-
-        tree = ET.parse(filename)
-        root = tree.getroot()
         hosts = root.findall("host")
 
         for host in hosts:
@@ -105,11 +100,8 @@ class XmlScan(Command):
 
         return port_ip_address_map
 
-    def _parse_masscan_xml_for_ip_address_port_mapping(self, filename):
+    def _parse_masscan_xml_for_ip_address_port_mapping(self, root):
         ip_address_port_map = dict()
-
-        tree = ET.parse(filename)
-        root = tree.getroot()
         hosts = root.findall("host")
 
         for host in hosts:
@@ -164,22 +156,25 @@ class XmlScan(Command):
                 )
 
     def _generate_output_files_from_masscan_xml(self):
+        tree = ET.parse(self.MASSCAN_XML_OUTPUT_PATH)
+        root = tree.getroot()
+
         all_ip_addresses = set()
         for (protocol, portid) in self.WEB_PORTS_TO_SCAN:
             ip_addresses = self._parse_masscan_xml_for_ip_addresses(
-                self.MASSCAN_XML_OUTPUT_PATH, protocol, portid)
+                root, protocol, portid)
             all_ip_addresses = all_ip_addresses.union(ip_addresses)
         self._write_output_to_file(self.web_clean_target_list_file_path,
                                    all_ip_addresses)
 
         port_ip_addresses_map = self._parse_masscan_xml_for_port_ip_address_mapping(
-            self.MASSCAN_XML_OUTPUT_PATH)
+            root)
         for (port, ip_addresses) in port_ip_addresses_map.items():
             self._write_output_to_file("output/ports/%s.txt" % port,
                                        ip_addresses)
 
         ip_addresses_port_map = self._parse_masscan_xml_for_ip_address_port_mapping(
-            self.MASSCAN_XML_OUTPUT_PATH)
+            root)
         for (ip_address, output) in ip_addresses_port_map.items():
             self._write_output_to_file("output/hosts/%s.txt" % ip_address,
                                        output)
@@ -193,4 +188,5 @@ class XmlScan(Command):
             "-oX %s" % self.MASSCAN_XML_OUTPUT_PATH
         ])
         self.run_command(command)
+        # TODO: Implement XML Tree error handling here, as the XML file may be badly formatted
         self._generate_output_files_from_masscan_xml()
