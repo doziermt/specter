@@ -28,6 +28,14 @@ If applicable, please follow the links above for information on installing each 
 
 WIP
 
+### Configuration
+
+Specter uses the [Dynaconf](https://github.com/rochacbruno/dynaconf) Python library for its configuration
+parsing and validation library. This project's configuration file uses the
+[TOML](https://github.com/toml-lang/toml) markup language.
+
+A sample configuration file exists underneath the relative path `samples/settings.sample.toml`.
+
 ### Input Files
 
 WIP - Need context.
