@@ -10,13 +10,13 @@ from dynaconf.validator import ValidationError
 def is_valid_ipv4_address(address):
     try:
         socket.inet_pton(socket.AF_INET, address)
-    except AttributeError:  # no inet_pton here, sorry
+    except AttributeError:
         try:
             socket.inet_aton(address)
         except socket.error:
             return False
         return address.count('.') == 3
-    except socket.error:  # not a valid address
+    except socket.error:
         return False
 
     return True
@@ -25,7 +25,7 @@ def is_valid_ipv4_address(address):
 def is_valid_ipv6_address(address):
     try:
         socket.inet_pton(socket.AF_INET6, address)
-    except socket.error:  # not a valid address
+    except socket.error:
         return False
     return True
 
@@ -60,7 +60,7 @@ def validate_ports(ports):
             return validate_port(port_option)
 
     if not ports:
-        return False, ["Configuration option is required"]
+        return False, ["A valid list of ports or port ranges is required"]
 
     port_list = ports.split(',')
     validation_results = [validate_port_option(port) for port in port_list]
@@ -75,12 +75,12 @@ def validate_port_settings(settings):
     webscan_ports_validation_results = validate_ports(settings.web_scan.ports)
     if not webscan_ports_validation_results[0]:
         raise ValidationError(
-            "Failed validation for `[web_scan].ports`. Reasons: %s" %
+            "Failed validation for `[web_scan].ports`. Reason: %s" %
             ",".join(webscan_ports_validation_results[1]))
     xml_scan_ports_validation_results = validate_ports(settings.xml_scan.ports)
     if not xml_scan_ports_validation_results[0]:
         raise ValidationError(
-            "Failed validation for `[xml_scan].ports`. Reasons: %s" %
+            "Failed validation for `[xml_scan].ports`. Reason: %s" %
             ",".join(xml_scan_ports_validation_results[1]))
 
 
