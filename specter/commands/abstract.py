@@ -47,11 +47,14 @@ class Command(object, metaclass=ABCMeta):
         op_name = inflection.underscore(cls.__name__)
         print('Running %s operation...' % op_name)
         print(
-            'Calling %s via subprocess.run() with the following command: %s' %
-            (cls.APPLICATION, command))
+            'Calling %s via subprocess.run() with the following command:\n\n%s'
+            % (cls.APPLICATION, command))
         print()
 
-        proc = None
+        def handle_error(process):
+            raise exceptions.SubprocessExecutionError(
+                "Failed to execute operation '%s'. Reason: subprocess.run() returned non-zero exit status %d for command:\n\n%s."
+                % (op_name, process.returncode, command))
 
         try:
             use_shell = isinstance(command, str)
@@ -60,9 +63,10 @@ class Command(object, metaclass=ABCMeta):
                                   check=True,
                                   universal_newlines=True)
         except subprocess.SubprocessError as e:
-            raise exceptions.SubprocessExecutionError(
-                "Failed to execute operation '%s'. Command '%s' returned non-zero exit status %d."
-                % (op_name, command, e.returncode))
+            handle_error(e)
+        else:
+            if proc.returncode != 0:
+                handle_error(proc)
 
         print("Successfully finished '%s' operation." % op_name)
 

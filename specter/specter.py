@@ -1,9 +1,11 @@
 import argparse
+from datetime import datetime
 import os
 
 from specter.commands import CleanList, Command, WebScan, XmlScan
 from specter.config import settings
 from specter.enums import Applications, Commands
+from specter import exceptions
 
 global INFO
 
@@ -76,10 +78,10 @@ def parse_args(parser):
     elif args.subcommand == Commands.XML_SCAN.value:
         command = XmlScan()
     else:
+        # This should be unreachable.
         raise RuntimeError("The sub-command '%s' is not supported" %
                            args.subcommand)
-
-    command.execute()
+    return command
 
 
 def build_output_folder_structure(output_directory=os.getcwd()):
@@ -98,7 +100,7 @@ def build_output_folder_structure(output_directory=os.getcwd()):
 
 def main():
     print(INFO)
-    parser = argparse.ArgumentParser(prog='specter.py')
+    parser = argparse.ArgumentParser(prog='specter')
     subparsers = parser.add_subparsers(title='subcommands',
                                        description='Valid specter subcommands',
                                        dest='subcommand',
@@ -106,8 +108,17 @@ def main():
     _init_web_scan_parser(subparsers)
     _init_xml_scan_parser(subparsers)
     _init_clean_list_parser(subparsers)
-    parse_args(parser)
+    command_to_execute = parse_args(parser)
+
     build_output_folder_structure()
+
+    try:
+        command_to_execute.execute()
+    except exceptions.SubprocessExecutionError as e:
+        print()
+        parser.error(e)
+    else:
+        parser.exit()
 
 
 if __name__ == '__main__':

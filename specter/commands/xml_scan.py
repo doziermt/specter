@@ -57,8 +57,7 @@ class XmlScan(Command):
 
     @property
     def ports(self):
-        ports = settings['xml_scan']['ports'].to_list()
-        return ",".join(["%s" % port for port in ports])
+        return settings['xml_scan']['ports']
 
     @property
     def scan_rate(self):
@@ -147,10 +146,13 @@ class XmlScan(Command):
         tree = ET.parse(self.MASSCAN_XML_OUTPUT_PATH)
         root = tree.getroot()
 
+        ports_to_scan = settings['xml_scan']['ports'].to_list()
         all_ip_addresses = set()
-        for (protocol, portid) in self.WEB_PORTS_TO_SCAN:
+
+        for portid in self.WEB_PORTS_TO_SCAN:
+            # All of these ports are "tcp", so hardcode it.
             ip_addresses = self._parse_masscan_xml_for_ip_addresses(
-                root, protocol, portid)
+                root, "tcp", portid)
             all_ip_addresses = all_ip_addresses.union(ip_addresses)
         self._write_output_to_file(self.web_clean_target_list_file_path,
                                    all_ip_addresses)
