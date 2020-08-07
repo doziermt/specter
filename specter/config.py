@@ -6,6 +6,81 @@ import traceback
 from dynaconf import Dynaconf, Validator
 from dynaconf.validator import ValidationError
 
+SETTINGS = None
+
+__all__ = ('load_settings', 'validate_settings')
+
+
+def load_settings():
+    global SETTINGS
+    validate_settings()
+    return SETTINGS
+
+
+def validate_settings(settings_file_path=None):
+    global SETTINGS
+
+    settings_file_path = settings_file_path or os.path.join(
+        os.getcwd(), '.specter', 'settings.toml')
+
+    if not os.path.exists(settings_file_path):
+        raise FileNotFoundError(
+            'Could not find the settings file at path: %s' %
+            settings_file_path)
+    if not os.path.isfile(settings_file_path):
+        raise TypeError(
+            'The settings file path must reference a valid TOML file: %s' %
+            settings_file_path)
+
+    SETTINGS = Dynaconf(environments=False,
+                        load_dotenv=False,
+                        settings_files=[settings_file_path],
+                        validators=[
+                            Validator('general', must_exist=True),
+                            Validator('general.sitename',
+                                      must_exist=True,
+                                      is_type_of=str),
+                            Validator('clean_list', must_exist=True),
+                            Validator('clean_list.exclude_list_file_name',
+                                      must_exist=True,
+                                      is_type_of=str),
+                            Validator('clean_list.target_list_file_name',
+                                      must_exist=True,
+                                      is_type_of=str),
+                            Validator('web_scan', must_exist=True),
+                            Validator('web_scan.clean_target_list_file_name',
+                                      must_exist=True,
+                                      is_type_of=str),
+                            Validator('web_scan.jitter',
+                                      must_exist=True,
+                                      is_type_of=int,
+                                      gte=0),
+                            Validator('web_scan.ports',
+                                      must_exist=True,
+                                      is_type_of=str),
+                            Validator('xml_scan', must_exist=True),
+                            Validator('xml_scan.clean_target_list_file_name',
+                                      must_exist=True,
+                                      is_type_of=str),
+                            Validator('xml_scan.masscan_ip',
+                                      must_exist=True,
+                                      is_type_of=str),
+                            Validator('xml_scan.interface',
+                                      must_exist=True,
+                                      is_type_of=str),
+                            Validator('xml_scan.ports',
+                                      must_exist=True,
+                                      is_type_of=str),
+                            Validator('xml_scan.scan_rate',
+                                      must_exist=True,
+                                      is_type_of=int,
+                                      gte=1),
+                        ])
+
+    SETTINGS.validators.validate()
+    validate_port_settings(SETTINGS)
+    validate_ip_address_settings(SETTINGS)
+
 
 def is_valid_ipv4_address(address):
     try:
@@ -94,51 +169,7 @@ def validate_ip_address_settings(settings):
             % ip_address)
 
 
-def validate_settings(config_file_name='settings.toml'):
-    settings = Dynaconf(
-        environments=False,
-        load_dotenv=False,
-        settings_files=[os.path.join(os.getcwd(), config_file_name)],
-        validators=[
-            Validator('general', must_exist=True),
-            Validator('general.sitename', must_exist=True, is_type_of=str),
-            Validator('clean_list', must_exist=True),
-            Validator('clean_list.exclude_list_file_path',
-                      must_exist=True,
-                      is_type_of=str),
-            Validator('clean_list.target_list_file_path',
-                      must_exist=True,
-                      is_type_of=str),
-            Validator('web_scan', must_exist=True),
-            Validator('web_scan.clean_target_list_file_path',
-                      must_exist=True,
-                      is_type_of=str),
-            Validator('web_scan.jitter',
-                      must_exist=True,
-                      is_type_of=int,
-                      gte=0),
-            Validator('web_scan.ports', must_exist=True, is_type_of=str),
-            Validator('xml_scan', must_exist=True),
-            Validator('xml_scan.clean_target_list_file_path',
-                      must_exist=True,
-                      is_type_of=str),
-            Validator('xml_scan.masscan_ip', must_exist=True, is_type_of=str),
-            Validator('xml_scan.interface', must_exist=True, is_type_of=str),
-            Validator('xml_scan.ports', must_exist=True, is_type_of=str),
-            Validator('xml_scan.scan_rate',
-                      must_exist=True,
-                      is_type_of=int,
-                      gte=1),
-        ])
-
-    settings.validators.validate()
-    validate_port_settings(settings)
-    validate_ip_address_settings(settings)
-
-    return settings
-
-
-if __name__ == '__main__':
+def main():
     # Validate the config file provided from the CLI if this script is called from there.
     try:
         settings_path = sys.argv[1] if len(sys.argv) > 1 else 'settings.toml'
@@ -148,6 +179,7 @@ if __name__ == '__main__':
         traceback.print_exception(e.__class__, e, tb, limit=2, file=sys.stdout)
         error_message = 'Dynaconf validation failed for config file: %s' % settings_path
         sys.exit(error_message)
-else:
-    # Otherwise imported from specter.py, load & validate the settings.
-    settings = validate_settings()
+
+
+if __name__ == '__main__':
+    main()
