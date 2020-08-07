@@ -24,9 +24,9 @@ jobs:
  
     - name: Install dependencies
       run: |
-        python3 -m pip install --upgrade pip3
-        pip3 install tox
-        pip3 install twine
+        python3 -m pip install --upgrade pip
+        pip install tox
+        pip install twine
 
     - name: Lint with yapf
       run: |
