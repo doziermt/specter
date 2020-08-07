@@ -2,7 +2,7 @@ import argparse
 from datetime import datetime
 import os
 
-from specter.commands import CleanList, Command, Init, WebScan, XmlScan
+from specter.commands import CleanList, Command, Init, Tree, WebScan, XmlScan
 from specter.config import validate_settings
 from specter.enums import Applications, Commands
 from specter import exceptions
@@ -74,6 +74,13 @@ def _init_web_scan_parser(subparsers):
         Commands.WEB_SCAN.value, help='Execute a web scan using eyewitness')
 
 
+def _init_tree_parser(subparsers):
+    """Argument parser for pretty-printing the specter directory as a tree."""
+    init_parser = subparsers.add_parser(
+        Commands.TREE.value,
+        help='Pretty prints the specter directory as a tree')
+
+
 def get_command_from_name(alias):
     command = None
 
@@ -81,6 +88,8 @@ def get_command_from_name(alias):
         command = Init()
     elif alias == Commands.CLEAN_LIST.value:
         command = CleanList()
+    elif alias == Commands.TREE.value:
+        command = Tree()
     elif alias == Commands.WEB_SCAN.value:
         command = WebScan()
     elif alias == Commands.XML_SCAN.value:
@@ -107,9 +116,10 @@ def main():
                                        dest='subcommand',
                                        required=True)
     _init_init_parser(subparsers)
-    _init_web_scan_parser(subparsers)
-    _init_xml_scan_parser(subparsers)
     _init_clean_list_parser(subparsers)
+    _init_xml_scan_parser(subparsers)
+    _init_web_scan_parser(subparsers)
+    _init_tree_parser(subparsers)
 
     args = parser.parse_args()
     command = get_command_from_name(args.subcommand)
