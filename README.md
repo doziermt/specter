@@ -10,13 +10,16 @@ Specter Recon Tool is a [KALI Linux](https://www.kali.org/) tool for...
 
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
+- [Configuration](#configuration)
+- [Input Files](#input-files)
+- [Output Files](#output-files)
 - [Supported Operations](#supported-operations)
 - [Developer Guide](#developer-guide)
 
 ## Prerequisites
 
-Specter should ideally be run on [KALI Linux](https://www.kali.org/). Specter uses the following **required**
-3rd-party scanning tools (that come pre-installed on KALI):
+Specter should ideally be run on [KALI Linux](https://www.kali.org/) as the **root user**.
+Specter uses the following **required** 3rd-party scanning tools (that come pre-installed on KALI):
 
 - [Nmap](https://nmap.org/) for generating a "clean target list"
 - [Masscan](https://github.com/robertdavidgraham/masscan) for performing port scan operations efficiently
@@ -28,7 +31,7 @@ If applicable, please follow the links above for information on installing each 
 
 WIP
 
-### Configuration
+## Configuration
 
 Specter uses the [Dynaconf](https://github.com/rochacbruno/dynaconf) Python library for its configuration
 parsing and validation library. This project's configuration file uses the
@@ -36,33 +39,38 @@ parsing and validation library. This project's configuration file uses the
 
 A sample configuration file exists underneath the relative path `samples/settings.sample.toml`.
 
-### Input Files
+## Input Files
 
-* `clean_list Operation`
-* `target_list.txt`: List of IPs or IP ranges to be scanned NOTE: 192.168.0.1-254 will scan .1 to .254 NOTE: 192,168.0.0/24 will scan .0 to .255
-* `exclude _list.txt`: List of IPs or IP ranges NOT to scan
-* `settings.toml`: Configuration file of operational settings to read in
+* `clean_list`:
+  * `target_list.txt`: List of IPs or IP ranges to be scanned NOTE: 192.168.0.1-254 will scan .1 to .254
 
-* `xml_scan Operation`
-* `xml_clean_target_list.txt`: List of IPs or IP ranges to scan with excluded IPs removed
-* `settings.toml`: Configuration file of operational settings to read in
+    **NOTE:**
 
-* `web_scan Operation`
-* `web_clean_target.list.txt`: List of IPs with ports 80,443,8000,8080,8443 open from `masscan.xml`
-* `settings.toml`: Configuration file of operational settings to read in 
+    > 192.168.0.0/24 will scan .0 to .255
 
-### Output Files
+  * `exclude _list.txt`: List of IPs or IP ranges NOT to scan
+  * `settings.toml`: Configuration file of operational settings to read in
 
-* `clean_list Operation`
-* `input/xml_clean_target_list.txt`: creates a list of IPs or IP ranges to scan with excluded IPs removed
+* `xml_scan`:
+  * `xml_clean_target_list.txt`: List of IPs or IP ranges to scan with excluded IPs removed
+  * `settings.toml`: Configuration file of operational settings to read in
 
-* `xml_scan Operation`
-* `output/xml/masscan.xml`: masscan output file saved to output/xml
-* `output/ports/`: port.txt files with lists of IPs with port found open from masscan.xml
-* `output/hosts/`: IP.txt files with lists of port data found open from masscan.xml
+* `web_scan`:
+  * `web_clean_target.list.txt`: List of IPs with ports 80,443,8000,8080,8443 open from `masscan.xml`
+  * `settings.toml`: Configuration file of operational settings to read in
 
-* `web_scan Operation`
-* `ouput/web_reports/Eyewitness`: masscan output file saved to output/xml
+## Output Files
+
+* `clean_list`:
+  * `input/xml_clean_target_list.txt`: creates a list of IPs or IP ranges to scan with excluded IPs removed
+
+* `xml_scan`:
+  * `output/xml/masscan.xml`: masscan output file saved to output/xml
+  * `output/ports/`: port.txt files with lists of IPs with port found open from masscan.xml
+  * `output/hosts/`: IP.txt files with lists of port data found open from masscan.xml
+
+* `web_scan`:
+  * `ouput/web_reports/Eyewitness`: masscan output file saved to output/xml
 
 ## Supported Operations
 
@@ -103,9 +111,26 @@ Examples:
 ### Dev Environment - Tools
 
 This project makes use of [tox](https://tox.readthedocs.io/en/latest/) to facilitate testing for developers.
-The following tox commands can be used:
+
+#### Tools for linting
 
 * `tox -e fmt`: Formats the Python project code using the Google linter tool, [yapf](https://github.com/google/yapf)
 * `tox -e lint`: Checks that the Python project code passes `yapf` linter checks
+
+#### Tools for configuration validation
+
 * `tox -e validate-config <CONFIG_FILE_PATH>`: Validates the [TOML](https://github.com/toml-lang/toml) configuration file specified by `<CONFIG_FILE_PATH>`
 * `tox -e validate-sample-config`: Validates the sample [TOML](https://github.com/toml-lang/toml) configuration file located underneath `samples/settings.sample.toml`
+
+#### Tools for package building and publishing
+
+Before executing these tox commands, first install [twine](https://pypi.org/project/twine/) *outside any virtual environment* by executing:
+
+```
+[pip|pip3] install twine
+```
+
+* `tox -e package-build`: Build the `specter` package distribution for publishing
+* `tox -e package-check`: Checks whether the distribution's description conforms to PyPi requirements
+* `tox -e package-test-upload`: Validates whether the distribution can successfully be uploaded to [TestPyPi](packaging.python.org/guides/using-testpypi)
+* `tox -e package-upload`: Uploads the distribution to [PyPi](https://pypi.org/)
