@@ -24,7 +24,7 @@ jobs:
  
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip3
+        python3 -m pip install --upgrade pip3
         pip3 install tox
         pip3 install twine
 
@@ -44,6 +44,6 @@ jobs:
       run: |
         tox -e package-check
 
-    - name: Test package uploading with twine
+    - name: Test package upload with twine
       run: |
         tox -e package-test-upload
