@@ -5,7 +5,7 @@ import os
 from specter.commands import CleanList, Command, WebScan, XmlScan
 from specter.config import settings
 from specter.enums import Applications, Commands
-from specter import exceptions
+from specter import __version__, exceptions
 
 global INFO
 
@@ -36,9 +36,9 @@ INFO = '''
 * SPECTER RECON TOOL - KALI LINUX SECURITY TOOL *
 =================================================
 
-~~~~~~~~~~~
-Version 0.1
-~~~~~~~~~~~
+~~~~~~~~~~~~~
+Version %s
+~~~~~~~~~~~~~
 
 EXECUTION STEPS
 ---------------
@@ -46,19 +46,20 @@ EXECUTION STEPS
 1) tox -e specter -- clean_list
 2) tox -e specter -- xml_scan
 3) tox -e specter -- web_scan
-'''
+''' % __version__
 
 
 def _init_clean_list_parser(subparsers):
     """Argument parser for clean_list operation"""
     clean_list_parser = subparsers.add_parser(
-        Commands.CLEAN_LIST.value, help='Execute a clean list using nmap')
+        Commands.CLEAN_LIST.value,
+        help='Generate a clean IP address list using nmap')
 
 
 def _init_xml_scan_parser(subparsers):
     """Argument parser for xml_scan operation"""
     port_scan_parser = subparsers.add_parser(
-        Commands.XML_SCAN.value, help='Execute a xml scan using masscan')
+        Commands.XML_SCAN.value, help='Execute an xml scan using masscan')
 
 
 def _init_web_scan_parser(subparsers):

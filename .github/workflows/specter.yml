@@ -9,7 +9,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  build_lint_validate:
 
     runs-on: ubuntu-latest
 
@@ -24,8 +24,9 @@ jobs:
  
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install tox
+        python -m pip install --upgrade pip3
+        pip3 install tox
+        pip3 install twine
 
     - name: Lint with yapf
       run: |
@@ -34,3 +35,15 @@ jobs:
     - name: Validate sample config
       run: |
         tox -e validate-sample-config
+
+    - name: Build package
+      run: |
+        tox -e package-build
+
+    - name: Check package build with twine
+      run: |
+        tox -e package-check
+
+    - name: Test package uploading with twine
+      run: |
+        tox -e package-test-upload
