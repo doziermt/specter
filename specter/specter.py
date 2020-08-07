@@ -125,7 +125,10 @@ def main():
     command = get_command_from_name(args.subcommand)
 
     if command.__class__ is not Init:
-        load_settings()
+        try:
+            load_settings()
+        except FileNotFoundError as e:
+            parser.error(e)
 
     try:
         command.execute()

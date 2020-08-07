@@ -1,7 +1,15 @@
+import os
 from pathlib import Path
+
+from specter.utils import log_warning
 
 
 class DisplayablePath(object):
+    """Diplays a directory tree structure using UNIX "tree"-like formatting.
+
+    Uses this open-source solution here: https://stackoverflow.com/a/49912639
+    """
+
     display_filename_prefix_middle = '├──'
     display_filename_prefix_last = '└──'
     display_parent_prefix_middle = '    '
@@ -74,6 +82,11 @@ class DisplayablePath(object):
 
 
 def print_tree(root='.specter'):
-    paths = DisplayablePath.make_tree(Path(root))
-    for path in paths:
-        print(path.displayable())
+    if os.path.exists(root):
+        paths = DisplayablePath.make_tree(Path(root))
+        for path in paths:
+            print(path.displayable())
+    else:
+        log_warning(
+            "The specter directory does not exist. Please run `specter init` first."
+        )

@@ -3,6 +3,7 @@ import shutil
 
 from specter.commands import Command
 from specter.enums import Applications
+from specter.utils import log_info, log_warning, print_tree
 
 
 class Init(Command):
@@ -13,20 +14,16 @@ class Init(Command):
         self._root_output_directory = os.path.join(os.getcwd(),
                                                    root_output_directory)
 
-    def execute(self):
-        self.build_specter_folder_structure()
-        self.copy_samples_to_target_folders()
-
-    def build_specter_folder_structure(self):
-        print('Creating specter input & output directories under: "%s"' %
-              self._root_output_directory)
+    def _build_specter_folder_structure(self):
+        log_info('Creating specter input & output directories under: "%s"' %
+                 self._root_output_directory)
         os.makedirs(self._root_output_directory, exist_ok=True)
         os.makedirs(os.path.join(self._root_output_directory, 'input'),
                     exist_ok=True)
         os.makedirs(os.path.join(self._root_output_directory, 'output'),
                     exist_ok=True)
 
-    def copy_samples_to_target_folders(self):
+    def _copy_samples_to_target_folders(self):
         current_directory = os.path.dirname(os.path.realpath(__file__))
         source_root_path = os.path.join(current_directory, os.pardir,
                                         'samples')
@@ -41,6 +38,19 @@ class Init(Command):
                 else:
                     target_file_path = os.path.join(os.getcwd(), '.specter',
                                                     'input', file_to_copy)
-                print('Copying input file "%s" to: "%s"' %
-                      (file_to_copy, target_file_path))
+                log_info('Copying input file "%s" to: "%s"' %
+                         (file_to_copy, target_file_path))
                 shutil.copyfile(source_file_path, target_file_path)
+
+    def execute(self):
+        exists_already = os.path.exists('.specter')
+        if exists_already:
+            log_warning(
+                "Specter directory already initialized. Please re-run `specter init --help` for further options.\n"
+            )
+            print_tree()
+        else:
+            self._build_specter_folder_structure()
+            self._copy_samples_to_target_folders()
+            print()
+            print_tree()
