@@ -141,11 +141,12 @@ def validate_settings(config_file_name='settings.toml'):
 if __name__ == '__main__':
     # Validate the config file provided from the CLI if this script is called from there.
     try:
-        validate_settings(sys.argv[1])
+        settings_path = sys.argv[1] if len(sys.argv) > 1 else 'settings.toml'
+        validate_settings(settings_path)
     except ValidationError as e:
         tb = sys.exc_info()[2]
         traceback.print_exception(e.__class__, e, tb, limit=2, file=sys.stdout)
-        error_message = 'Dynaconf validation failed for config file: %s' % sample_conf_rel_path
+        error_message = 'Dynaconf validation failed for config file: %s' % settings_path
         sys.exit(error_message)
 else:
     # Otherwise imported from specter.py, load & validate the settings.
