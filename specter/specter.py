@@ -43,9 +43,10 @@ Version 0.1
 EXECUTION STEPS
 ---------------
 
-1) tox -e specter -- clean_list
-2) tox -e specter -- xml_scan
-3) tox -e specter -- web_scan
+0) specter init
+1) specter clean_list
+2) specter xml_scan
+3) specter web_scan
 '''
 
 

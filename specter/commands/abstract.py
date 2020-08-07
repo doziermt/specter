@@ -111,7 +111,6 @@ class Command(object, metaclass=ABCMeta):
             if use_existing else _generate_new_subdirectory_name(sitename))
 
         subdirectories = {
-            os.path.abspath('%s/enumeration' % output_directory),
             os.path.abspath('%s/hosts' % output_directory),
             os.path.abspath('%s/ports' % output_directory),
             os.path.abspath('%s/web_reports/eyewitness' % output_directory),
