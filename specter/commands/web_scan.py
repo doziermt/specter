@@ -25,8 +25,7 @@ class WebScan(Command):
 
     @property
     def ports(self):
-        ports = settings['web_scan']['ports'].to_list()
-        return ",".join(["%s" % port for port in ports])
+        return settings['web_scan']['ports']
 
     @property
     def jitter(self):

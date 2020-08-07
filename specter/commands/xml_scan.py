@@ -11,7 +11,6 @@ from specter.enums import Applications
 class XmlScan(Command):
     APPLICATION = Applications.MASSCAN.value
 
-    # TODO: Use settings.toml configuration option for the ports to search for in the masscan.xml file
     WEB_PORTS_TO_SCAN = (
         ("tcp", "443"),
         ("tcp", "80"),
@@ -57,8 +56,7 @@ class XmlScan(Command):
 
     @property
     def ports(self):
-        ports = settings['xml_scan']['ports'].to_list()
-        return ",".join(["%s" % port for port in ports])
+        return settings['xml_scan']['ports']
 
     @property
     def scan_rate(self):
@@ -148,7 +146,8 @@ class XmlScan(Command):
         root = tree.getroot()
 
         all_ip_addresses = set()
-        for (protocol, portid) in self.WEB_PORTS_TO_SCAN:
+
+        for (portid, protocol) in self.WEB_PORTS_TO_SCAN:
             ip_addresses = self._parse_masscan_xml_for_ip_addresses(
                 root, protocol, portid)
             all_ip_addresses = all_ip_addresses.union(ip_addresses)
