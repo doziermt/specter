@@ -1,11 +1,12 @@
 import ipaddress
 import os
 import subprocess
-import xml.etree.ElementTree as ET
+from xml.etree import ElementTree
 
 from specter.commands import Command
-from specter.config import settings
+from specter.config import load_settings
 from specter.enums import Applications
+from specter import exceptions
 
 
 class XmlScan(Command):
@@ -19,51 +20,53 @@ class XmlScan(Command):
         ("tcp", "8443"),
     )
 
-    MASSCAN_XML_OUTPUT_PATH = 'output/xml/masscan.xml'
-
     @property
     def sitename(self):
-        return settings.general.sitename
+        return self.SETTINGS.general.sitename
 
     @property
-    def web_clean_target_list_file_path(self):
-        path = os.path.abspath(
-            settings['web_scan']['clean_target_list_file_path'])
-        self.validate_target_file_path(
-            path, "[web_scan].clean_target_list_file_path")
-        return path
+    def masscan_xml_path(self):
+        return os.path.join(self.output_directory, "xml/masscan.xml")
 
     @property
-    def xml_clean_target_list_file_path(self):
+    def xml_clean_target_list_file_name(self):
         """First checks whether clean_list has generated the clean target list for this operation
         and then returns the configuration value.
         """
-        path = settings['xml_scan']['clean_target_list_file_path']
-        if not os.path.exists(os.path.abspath(path)):
-            raise FileNotFoundError(
-                "Could not find [xml_scan].clean_target_list_file_path. "
-                "Please run \"clean_list\" operation first before running \"xml_scan\"."
-            )
-        return os.path.abspath(path)
+        path = os.path.join(
+            self.output_directory,
+            self.SETTINGS['xml_scan']['clean_target_list_file_name'])
+        self.validate_input_file_path(
+            path, "[xml_scan].clean_target_list_file_name")
+        return path
+
+    @property
+    def web_clean_target_list_file_name(self):
+        return os.path.join(
+            self.output_directory,
+            self.SETTINGS['web_scan']['clean_target_list_file_name'])
 
     @property
     def ip(self):
-        return settings['xml_scan']['masscan_ip']
+        return self.SETTINGS['xml_scan']['masscan_ip']
 
     @property
     def interface(self):
-        return settings['xml_scan']['interface']
+        return self.SETTINGS['xml_scan']['interface']
 
     @property
     def ports(self):
-        return settings['xml_scan']['ports']
+        return self.SETTINGS['xml_scan']['ports']
 
     @property
     def scan_rate(self):
-        return settings['xml_scan']['scan_rate']
+        return self.SETTINGS['xml_scan']['scan_rate']
 
     def __init__(self):
         super().__init__()
+        self.SETTINGS = load_settings()
+        self.output_directory = self.build_specter_output_folder_structure(
+            self.SETTINGS.general.sitename, use_existing=True)
 
     def _parse_masscan_xml_for_ip_addresses(self, root, target_protocol,
                                             target_portid):
@@ -142,38 +145,57 @@ class XmlScan(Command):
             out.writelines("\n".join([str(x) for x in ip_addresses]))
 
     def _generate_output_files_from_masscan_xml(self):
-        tree = ET.parse(self.MASSCAN_XML_OUTPUT_PATH)
+        tree = ElementTree.parse(self.masscan_xml_path)
         root = tree.getroot()
 
         all_ip_addresses = set()
 
         for (portid, protocol) in self.WEB_PORTS_TO_SCAN:
-            ip_addresses = self._parse_masscan_xml_for_ip_addresses(
-                root, protocol, portid)
+            try:
+                ip_addresses = self._parse_masscan_xml_for_ip_addresses(
+                    root, protocol, portid)
+            except ElementTree.ParseError as e:
+                raise exceptions.OutputParseException(
+                    "Failed to generate clean target list for web_scan operation. Reason: %s"
+                    % e)
+
             all_ip_addresses = all_ip_addresses.union(ip_addresses)
-        self._write_output_to_file(self.web_clean_target_list_file_path,
+        self._write_output_to_file(self.web_clean_target_list_file_name,
                                    all_ip_addresses)
 
-        port_ip_addresses_map = self._parse_masscan_xml_for_port_ip_address_mapping(
-            root)
-        for (port, ip_addresses) in port_ip_addresses_map.items():
-            self._write_output_to_file("output/ports/%s.txt" % port,
-                                       ip_addresses)
+        try:
+            port_ip_addresses_map = self._parse_masscan_xml_for_port_ip_address_mapping(
+                root)
+        except ElementTree.ParseError as e:
+            raise exceptions.OutputParseException(
+                "Failed to generate port output files for xml_scan. Reason: %s"
+                % e)
 
-        ip_addresses_port_map = self._parse_masscan_xml_for_ip_address_port_mapping(
-            root)
+        for (port, ip_addresses) in port_ip_addresses_map.items():
+            self._write_output_to_file(
+                os.path.join(self.output_directory, "ports", "%s.txt" % port),
+                ip_addresses)
+
+        try:
+            ip_addresses_port_map = self._parse_masscan_xml_for_ip_address_port_mapping(
+                root)
+        except ElementTree.ParseError as e:
+            raise exceptions.OutputParseException(
+                "Failed to generate host output files for xml_scan. Reason: %s"
+                % e)
+
         for (ip_address, output) in ip_addresses_port_map.items():
-            self._write_output_to_file("output/hosts/%s.txt" % ip_address,
-                                       output)
+            self._write_output_to_file(
+                os.path.join(self.output_directory, "hosts",
+                             "%s.txt" % ip_address), output)
 
     def execute(self):
         command = " ".join([
             self.APPLICATION, "--max-retries=1", "--banners", "--source-ip",
             self.ip, "--source-port 61000", "--open", "-e", self.interface,
-            "-p", self.ports, "-iL", self.xml_clean_target_list_file_path,
+            "-p", self.ports, "-iL", self.xml_clean_target_list_file_name,
             "--rate=%d" % self.scan_rate,
-            "-oX %s" % self.MASSCAN_XML_OUTPUT_PATH
+            "-oX %s" % self.masscan_xml_path
         ])
         self.run_command(command)
-        # TODO: Implement XML Tree error handling here, as the XML file may be badly formatted
         self._generate_output_files_from_masscan_xml()
