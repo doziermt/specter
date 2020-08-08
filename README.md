@@ -31,11 +31,37 @@ If applicable, please follow the links above for information on installing each 
 
 ### Installing Specter
 
-WIP
+This project uses PyPi for package management, and `pip` is required to install the `specter` package.
+
+If you do not have `pip` installed, follow the [installation instructions](https://pip.pypa.io/en/stable/installing/).
+
+Afterward, run:
+
+> pip install -i https://test.pypi.org/simple/ specter
+
+To sanity-check that it has been installed correctly, run:
+
+> specter -h
 
 ### Running Specter
 
-WIP
+1. First, initialize the [Specter Work Directory](#specter-work-directory) by running `specter init`
+   This will create a directory called `specter_workdir` *within your current working directory*
+2. Open up the `settings.toml` file -- with the editor of your choice -- located at `specter_workdir/settings.toml`
+3. Update the following setting options to work with your network configuration:
+
+   * `[general].sitename`
+   * `[clean_list].nmap_target_list`
+   * `[clean_list].nmap_exclude_list`
+   * `[xml_scan].masscan_ip`
+   * `[xml_scan].interface`
+
+4. Execute `specter clean_list` to generate the clean target list using `nmap`
+5. Execute `specter xml_scan` to perform a port scan using `masscan`
+6. Execute `specter web_scan` to perform a web scan using `eyewitness`
+7. Execute `specter tree` to see all files in the [Specter Work Directory](#specter-work-directory)
+
+For more information on `specter` commands, reference [Supported Commands](#supported-commands).
 
 ## Configuration
 
@@ -95,7 +121,7 @@ specter_workdir/
 
 **NOTE**:
 
-> Your Specter work will may contain different host and IP files dependending on your network configuration.
+> Your [Specter Work Directory](#specter-work-directory) will contain different host and IP files dependending on your network configuration.
 
 ### Configuration Files
 
