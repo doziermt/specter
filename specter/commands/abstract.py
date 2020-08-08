@@ -95,7 +95,8 @@ class Command(object, metaclass=ABCMeta):
         sitename,
         use_existing,
     ):
-        root_output_directory = os.path.join(os.getcwd(), 'specter_workdir', 'output')
+        root_output_directory = os.path.join(os.getcwd(), 'specter_workdir',
+                                             'output')
 
         def _generate_new_subdirectory_name(sitename):
             new_timestamp = str(datetime.now()).replace(' ', '_')
@@ -134,7 +135,7 @@ class Command(object, metaclass=ABCMeta):
     def _validate_path_exists(cls, path, settings_alias):
         if not os.path.exists(path) or not os.path.isfile(path):
             raise FileNotFoundError(
-                'File path "%s" is not valid. Reason: The "%s" option in sett   ings.toml must exist and reference a file.'
+                'File path "%s" is not valid. Reason: The "%s" option in settings.toml must exist and reference a file.'
                 % (path, settings_alias))
 
     @classmethod

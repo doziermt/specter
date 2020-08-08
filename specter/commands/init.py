@@ -33,11 +33,13 @@ class Init(Command):
             if os.path.isfile(source_file_path):
                 # Rename settings.sample.toml to settings.toml in the output directory.
                 if file_to_copy.endswith('.toml'):
-                    target_file_path = os.path.join(os.getcwd(), 'specter_workdir',
+                    target_file_path = os.path.join(os.getcwd(),
+                                                    'specter_workdir',
                                                     'settings.toml')
                 else:
-                    target_file_path = os.path.join(os.getcwd(), 'specter_workdir',
-                                                    'input', file_to_copy)
+                    target_file_path = os.path.join(os.getcwd(),
+                                                    'specter_workdir', 'input',
+                                                    file_to_copy)
                 log_info('Copying input file "%s" to: "%s"' %
                          (file_to_copy, target_file_path))
                 shutil.copyfile(source_file_path, target_file_path)
