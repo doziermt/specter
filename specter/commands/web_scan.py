@@ -21,9 +21,9 @@ class WebScan(Command):
         """
         path = os.path.join(
             self.output_directory,
-            self.SETTINGS['web_scan']['clean_target_list_file_name'])
+            self.SETTINGS['xml_scan']['clean_target_list_file_name'])
         self.validate_input_file_path(
-            path, "[web_scan].clean_target_list_file_name")
+            path, "[xml_scan].clean_target_list_file_name")
         return path
 
     @property
