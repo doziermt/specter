@@ -2,6 +2,10 @@ class SpecterBaseException(Exception):
     pass
 
 
+class IllegalExecutionException(SpecterBaseException):
+    pass
+
+
 class AppDependencyNotFoundException(SpecterBaseException):
     pass
 

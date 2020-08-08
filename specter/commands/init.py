@@ -18,8 +18,6 @@ class Init(Command):
         log_info('Creating specter input & output directories under: "%s"' %
                  self._root_output_directory)
         os.makedirs(self._root_output_directory, exist_ok=True)
-        os.makedirs(os.path.join(self._root_output_directory, 'input'),
-                    exist_ok=True)
         os.makedirs(os.path.join(self._root_output_directory, 'output'),
                     exist_ok=True)
 
@@ -36,13 +34,9 @@ class Init(Command):
                     target_file_path = os.path.join(os.getcwd(),
                                                     'specter_workdir',
                                                     'settings.toml')
-                else:
-                    target_file_path = os.path.join(os.getcwd(),
-                                                    'specter_workdir', 'input',
-                                                    file_to_copy)
-                log_info('Copying input file "%s" to: "%s"' %
-                         (file_to_copy, target_file_path))
-                shutil.copyfile(source_file_path, target_file_path)
+                    log_info('Copying input file "%s" to: "%s"' %
+                             (file_to_copy, target_file_path))
+                    shutil.copyfile(source_file_path, target_file_path)
 
     def execute(self):
         exists_already = os.path.exists('specter_workdir')

@@ -49,11 +49,11 @@ class WebScan(Command):
     def execute(self):
         """Executes the web_scan command, currently only supports eyewitness."""
         # TODO: Validate `output/web_reports/eyewitness` output file path.
-        command = " ".join([
+        command = [
             self.APPLICATION, '--web', '--add-http-ports', self.ports,
             '--add-https-ports', self.ports, '--no-prompt',
             '--threads %d' % self.threads, '--jitter',
             '%s' % self.jitter, '-f', self.clean_target_list_file_name,
             '-d %s' % self.eyewitness_output_file
-        ])
+        ]
         self.run_command(command)
