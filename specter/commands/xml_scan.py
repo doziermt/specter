@@ -42,9 +42,12 @@ class XmlScan(Command):
 
     @property
     def web_clean_target_list_file_name(self):
-        return os.path.join(
+        path = os.path.join(
             self.output_directory,
             self.SETTINGS['web_scan']['clean_target_list_file_name'])
+        self.validate_output_file_path(
+            path, "[web_scan].clean_target_list_file_name")
+        return path
 
     @property
     def ip(self):
@@ -150,7 +153,7 @@ class XmlScan(Command):
 
         all_ip_addresses = set()
 
-        for (portid, protocol) in self.WEB_PORTS_TO_SCAN:
+        for (protocol, portid) in self.WEB_PORTS_TO_SCAN:
             try:
                 ip_addresses = self._parse_masscan_xml_for_ip_addresses(
                     root, protocol, portid)

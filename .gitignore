@@ -132,7 +132,7 @@ dmypy.json
 ChangeLog
 
 # specter input & output files
-.specter/*
+specter_workdir/*
 
 # Ignore dynaconf secret files
 .secrets.*

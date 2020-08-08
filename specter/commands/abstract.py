@@ -11,7 +11,9 @@ from specter.utils import log_info, log_success
 
 class Command(object, metaclass=ABCMeta):
     """Abstract base class that all commands should inherit from."""
-    """All sub-classes must specify this. Examples include ``Applications.NMAP.value`` or ``Applications.MASSCAN.value``."""
+
+    # Each sub-class that uses a 3rd-party app must provide a value for `APPLICATION`.
+    # Examples include ``Applications.NMAP.value`` or ``Applications.MASSCAN.value``.
     APPLICATION = None
 
     @classmethod
@@ -35,14 +37,13 @@ class Command(object, metaclass=ABCMeta):
     def run_command(cls, command):
         """Runs a subprocess command using ``subprocess.run``.
 
-        The ``stdout`` of the process is emitted to the terminal, but ``stderr`` is piped back to subprocess so that
-        error handling can be performed.
+        The ``stdout`` and ``stderr`` are both emitted to the console since neither are captured.
 
         :param list command: A command to run in a subprocess.
         :returns: None
         """
         if not command:
-            raise TypeError(
+            raise RuntimeError(
                 "The command passed to %s.run_command must be provided" %
                 cls.__name__)
 
@@ -58,6 +59,7 @@ class Command(object, metaclass=ABCMeta):
                 % (op_name, process.returncode))
 
         try:
+            # In case a string is passed for `command` instead, attempt to handle it.
             use_shell = isinstance(command, str)
             proc = subprocess.run(command,
                                   shell=use_shell,
@@ -74,14 +76,18 @@ class Command(object, metaclass=ABCMeta):
     @classmethod
     def validate_input_file_path(cls, file_path, settings_alias):
         """Validates that ``file_path`` isn't a directory and the user has permissons to read it."""
-        if not os.path.isfile(file_path):
-            raise FileNotFoundError(
-                'Failed to locate file: "%s". Reason: The "%s" option in settings.toml must reference a file, not a directory'
-                % (file_path, settings_alias))
-        if not os.access(file_path, os.R_OK):
-            raise IOError(
-                'Failed to read file: "%s". Reason: The "%s" option in settings.toml must be a readable file'
-                % s(file_path, settings_alias))
+        cls._validate_path_exists(file_path, settings_alias)
+        cls._validate_path_access(file_path,
+                                  settings_alias,
+                                  access_level=os.R_OK)
+
+    @classmethod
+    def validate_output_file_path(cls, file_path, settings_alias=None):
+        """Validates that user has permissions to read ``file_path``."""
+        directory_path = os.path.dirname(file_path)
+        cls._validate_path_access(directory_path,
+                                  settings_alias,
+                                  access_level=os.W_OK)
 
     @classmethod
     def build_specter_output_folder_structure(
@@ -89,7 +95,8 @@ class Command(object, metaclass=ABCMeta):
         sitename,
         use_existing,
     ):
-        root_output_directory = os.path.join(os.getcwd(), '.specter', 'output')
+        root_output_directory = os.path.join(os.getcwd(), 'specter_workdir',
+                                             'output')
 
         def _generate_new_subdirectory_name(sitename):
             new_timestamp = str(datetime.now()).replace(' ', '_')
@@ -123,6 +130,25 @@ class Command(object, metaclass=ABCMeta):
             os.makedirs(directory, exist_ok=True)
 
         return output_directory
+
+    @classmethod
+    def _validate_path_exists(cls, path, settings_alias):
+        if not os.path.exists(path) or not os.path.isfile(path):
+            raise FileNotFoundError(
+                'File path "%s" is not valid. Reason: The "%s" option in settings.toml must exist and reference a file.'
+                % (path, settings_alias))
+
+    @classmethod
+    def _validate_path_access(cls, path, settings_alias, access_level):
+        if not os.access(path, access_level):
+            if access_level is os.R_OK:
+                raise IOError(
+                    'File path "%s" could not be accessed. Reason: The "%s" option in settings.toml must be a readable file.'
+                    % (path, settings_alias))
+            else:
+                raise IOError(
+                    'Path "%s" could not be written to. Please validate the Specter Work Directory folder permissions.'
+                    % path)
 
     @abstractmethod
     def __init__(self):

@@ -102,7 +102,7 @@ def get_command_from_name(alias):
     return command
 
 
-def load_settings(root_output_directory='.specter'):
+def load_settings(root_output_directory='specter_workdir'):
     settings_file_path = os.path.join(os.getcwd(), root_output_directory,
                                       'settings.toml')
     validate_settings(settings_file_path=settings_file_path)
@@ -135,7 +135,6 @@ def main():
         command.execute()
     except (exceptions.SubprocessExecutionException,
             exceptions.OutputParseException) as e:
-        print()
         parser.error(e)
     else:
         parser.exit()

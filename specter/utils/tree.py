@@ -81,7 +81,7 @@ class DisplayablePath(object):
         return ''.join(reversed(parts))
 
 
-def print_tree(root='.specter'):
+def print_tree(root='specter_workdir'):
     if os.path.exists(root):
         paths = DisplayablePath.make_tree(Path(root))
         for path in paths:

@@ -38,7 +38,8 @@ class CleanList(Command):
     def __init__(self):
         super().__init__()
         self.SETTINGS = load_settings()
-        self.input_directory = os.path.join(os.getcwd(), '.specter', 'input')
+        self.input_directory = os.path.join(os.getcwd(), 'specter_workdir',
+                                            'input')
         self.output_directory = self.build_specter_output_folder_structure(
             self.SETTINGS.general.sitename, use_existing=False)
 

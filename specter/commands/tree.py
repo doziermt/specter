@@ -3,7 +3,7 @@ from specter.utils import print_tree
 
 
 class Tree(Command):
-    """Pretty-prints the .specter directory as a tree."""
+    """Pretty-prints the specter_workdir directory as a tree."""
     APPLICATION = None
 
     def __init__(self):

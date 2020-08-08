@@ -4,9 +4,11 @@ sitename = "test"
 
 [clean_list]
 # (required) The target list file of IPs and IP ranges to scan.
+# TODO: Implement validation logic or else roll up this configuration into this file
 target_list_file_name = "target_list.txt"
 # (optional) The excluded list of excluded IPs that will NOT be scanned.
 # TODO: Implement logic to make this optional
+# TODO: Implement validation logic or else roll up this configuration into this file
 exclude_list_file_name = "exclude_list.txt"
 
 [web_scan]
