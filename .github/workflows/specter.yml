@@ -48,5 +48,5 @@ jobs:
       run: |
         tox -e package-test-upload
       env:
-        TWINE_USERNAME: ${{ secret.TWINE_USERNAME }}
-        TWINE_PASSWORD: ${{ secret.TWINE_PASSWORD }}
+        TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
