@@ -1,8 +1,9 @@
+from importlib import import_module
 import os
 import tempfile
 
 from specter.commands import Command
-from specter.config import settings
+from specter.config import load_settings
 from specter.enums import Applications
 
 
@@ -10,30 +11,37 @@ class CleanList(Command):
     APPLICATION = Applications.NMAP.value
 
     @property
-    def xml_clean_target_list_file_path(self):
-        path = os.path.abspath(
-            settings['xml_scan']['clean_target_list_file_path'])
-        self.validate_target_file_path(
-            path, "[xml_scan].clean_target_list_file_path")
-        return path
+    def nmap_target_list(self):
+        return self.SETTINGS.clean_list.nmap_target_list
 
     @property
-    def target_list_file_path(self):
-        path = os.path.abspath(settings['clean_list']['target_list_file_path'])
-        self.validate_target_file_path(path,
-                                       "[clean_list].target_list_file_path")
-        return path
+    def nmap_target_list_file(self):
+        # Create a temporary file to pass to nmap because it doesn't seem to support a
+        # comma-delimited string of IP addresses.
+        _, temporary_file = tempfile.mkstemp(prefix='specter')
+        with open(temporary_file, 'w') as f:
+            f.writelines(
+                ["%s\n" % line for line in self.nmap_target_list.split(",")])
+        return temporary_file
 
     @property
-    def exclude_list_file_path(self):
-        path = os.path.abspath(
-            settings['clean_list']['exclude_list_file_path'])
-        self.validate_target_file_path(path,
-                                       "[clean_list].exclude_list_file_path")
+    def nmap_exclude_list(self):
+        return self.SETTINGS.clean_list.nmap_exclude_list
+
+    @property
+    def xml_clean_target_list_file_name(self):
+        path = os.path.join(
+            self.output_directory,
+            self.SETTINGS['xml_scan']['clean_target_list_file_name'])
         return path
 
     def __init__(self):
         super().__init__()
+        self.SETTINGS = load_settings()
+        self.input_directory = os.path.join(os.getcwd(), 'specter_workdir',
+                                            'input')
+        self.output_directory = self.build_specter_output_folder_structure(
+            self.SETTINGS.general.sitename, use_existing=False)
 
     def execute(self):
         # Create a temporary file in order to temporarily dump out all the contents to a file
@@ -44,8 +52,8 @@ class CleanList(Command):
         _, temporary_file = tempfile.mkstemp(prefix='specter')
 
         command = [
-            self.APPLICATION, "-sL", "-n", "-iL", self.target_list_file_path,
-            "--excludefile", self.exclude_list_file_path, "-oN", temporary_file
+            self.APPLICATION, "-sL", "-n", "-iL", self.nmap_target_list_file,
+            "--exclude", self.nmap_exclude_list, "-oN", temporary_file
         ]
         self.run_command(command)
 
@@ -53,5 +61,5 @@ class CleanList(Command):
             relevant_lines = readfile.readlines()[1:-2]
             formatted_lines = [line.split(' ')[-1] for line in relevant_lines]
 
-        with open(self.xml_clean_target_list_file_path, 'w') as outfile:
+        with open(self.xml_clean_target_list_file_name, 'w') as outfile:
             outfile.writelines(formatted_lines)
