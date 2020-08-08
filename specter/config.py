@@ -88,7 +88,7 @@ def validate_ip_addresses(ip_addresses):
         try:
             ipaddress.ip_address(ip_address)
         except ValueError:
-            return False, "%s is neither a valid ipv4 ipv6 address" % ip_address
+            return False, "%s is neither a valid IPv4 nor IPv6 address" % ip_address
         return True, None
 
     def validate_ip_address_range(ip_address_range):
