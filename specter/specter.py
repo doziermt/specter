@@ -123,18 +123,18 @@ def main():
     _init_tree_parser(subparsers)
 
     args = parser.parse_args()
-    command = get_command_from_name(args.subcommand)
-
-    if command.__class__ is not Init:
-        try:
-            load_settings()
-        except FileNotFoundError as e:
-            parser.error(e)
 
     try:
+        command = get_command_from_name(args.subcommand)
+
+        if command.__class__ is not Init:
+            try:
+                load_settings()
+            except FileNotFoundError as e:
+                parser.error(e)
+
         command.execute()
-    except (exceptions.SubprocessExecutionException,
-            exceptions.OutputParseException) as e:
+    except exceptions.SpecterBaseException as e:
         parser.error(e)
     else:
         parser.exit()

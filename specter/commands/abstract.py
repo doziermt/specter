@@ -115,6 +115,10 @@ class Command(object, metaclass=ABCMeta):
                 directory for directory in os.listdir(root_output_directory)
                 if directory.startswith(sitename + '_')
             ]
+            if not candidates:
+                raise exceptions.IllegalExecutionException(
+                    "No Specter Work Directory snapshot found. Please run `specter clean_list` first then try again."
+                )
             return sorted(candidates, key=sort_by_timestamp)[0]
 
         output_directory = os.path.join(
