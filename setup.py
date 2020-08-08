@@ -16,6 +16,7 @@ setuptools.setup(name='specter',
                  url='https://github.com/doziermt/specter',
                  keywords=['Linux', 'Security', 'Python'],
                  packages=setuptools.find_packages(),
+                 include_package_data=True,
                  classifiers=[
                      'Development Status :: 3 - Alpha',
                      'Intended Audience :: Developers',
