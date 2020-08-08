@@ -11,22 +11,20 @@ class CleanList(Command):
     APPLICATION = Applications.NMAP.value
 
     @property
-    def target_list_file_name(self):
-        path = os.path.join(
-            self.input_directory,
-            self.SETTINGS['clean_list']['target_list_file_name'])
-        self.validate_input_file_path(path,
-                                      "[clean_list].target_list_file_name")
-        return path
+    def nmap_target_list(self):
+        return self.SETTINGS.clean_list.nmap_target_list
 
     @property
-    def exclude_list_file_name(self):
-        path = os.path.join(
-            self.input_directory,
-            self.SETTINGS['clean_list']['exclude_list_file_name'])
-        self.validate_input_file_path(path,
-                                      "[clean_list].exclude_list_file_name")
-        return path
+    def nmap_target_list_file(self):
+        _, temporary_file = tempfile.mkstemp(prefix='specter')
+        with open(temporary_file, 'w') as f:
+            f.writelines(
+                ["%s\n" % line for line in self.nmap_target_list.split(",")])
+        return temporary_file
+
+    @property
+    def nmap_exclude_list(self):
+        return self.SETTINGS.clean_list.nmap_exclude_list
 
     @property
     def xml_clean_target_list_file_name(self):
@@ -52,8 +50,8 @@ class CleanList(Command):
         _, temporary_file = tempfile.mkstemp(prefix='specter')
 
         command = [
-            self.APPLICATION, "-sL", "-n", "-iL", self.target_list_file_name,
-            "--excludefile", self.exclude_list_file_name, "-oN", temporary_file
+            self.APPLICATION, "-sL", "-n", "-iL", self.nmap_target_list_file,
+            "--exclude", self.nmap_exclude_list, "-oN", temporary_file
         ]
         self.run_command(command)
 

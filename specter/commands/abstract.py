@@ -51,7 +51,7 @@ class Command(object, metaclass=ABCMeta):
         log_info('Running %s operation...' % op_name)
         log_info(
             'Calling %s via subprocess.run() with the following command:\n\n%s\n'
-            % (cls.APPLICATION, command))
+            % (cls.APPLICATION, ' '.join(command)))
 
         def handle_error(process):
             raise exceptions.SubprocessExecutionException(
