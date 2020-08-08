@@ -6,7 +6,7 @@ sitename = "test"
 # (required) The comma-delimited target list of IPs and IP ranges to scan.
 nmap_target_list = "10.0.0.1-254"
 # (required) The comma-delimited list of excluded IPs that will NOT be scanned.
-nmap_exclude_list = "10.0.0.24-26,10.0.0.254"
+nmap_exclude_list = "10.0.0.254"
 
 [web_scan]
 # (required) The clean target list of IPs that will be scanned.

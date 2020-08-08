@@ -46,12 +46,18 @@ class Command(object, metaclass=ABCMeta):
             raise RuntimeError(
                 "The command passed to %s.run_command must be provided" %
                 cls.__name__)
+        if not isinstance(command, list):
+            raise TypeError(
+                "The command passed to %s.run_command must be a list" %
+                cls.__name__)
 
+        command_to_run = ' '.join(command)
         op_name = inflection.underscore(cls.__name__)
+
         log_info('Running %s operation...' % op_name)
         log_info(
             'Calling %s via subprocess.run() with the following command:\n\n%s\n'
-            % (cls.APPLICATION, ' '.join(command)))
+            % (cls.APPLICATION, command_to_run))
 
         def handle_error(process):
             raise exceptions.SubprocessExecutionException(
@@ -59,10 +65,8 @@ class Command(object, metaclass=ABCMeta):
                 % (op_name, process.returncode))
 
         try:
-            # In case a string is passed for `command` instead, attempt to handle it.
-            use_shell = isinstance(command, str)
-            proc = subprocess.run(command,
-                                  shell=use_shell,
+            proc = subprocess.run(command_to_run,
+                                  shell=True,
                                   check=True,
                                   universal_newlines=True)
         except subprocess.SubprocessError as e:
