@@ -16,6 +16,8 @@ class CleanList(Command):
 
     @property
     def nmap_target_list_file(self):
+        # Create a temporary file to pass to nmap because it doesn't seem to support a
+        # comma-delimited string of IP addresses.
         _, temporary_file = tempfile.mkstemp(prefix='specter')
         with open(temporary_file, 'w') as f:
             f.writelines(
