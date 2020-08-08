@@ -11,15 +11,9 @@ Specter Recon Tool is a [KALI Linux](https://www.kali.org/) tool for...
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
 - [Configuration](#configuration)
-<<<<<<< HEAD
-- [Input Files](#input-files)
-- [Output Files](#output-files)
-- [Supported Operations](#supported-operations)
-=======
 - [Files](#files)
 - [Supported Commands](#supported-commands)
 - [Specter Work Directory](#specter-work-directory)
->>>>>>> 716621167d4b106d6322198c530216a3124eec47
 - [Developer Guide](#developer-guide)
 
 ## Prerequisites
@@ -109,8 +103,7 @@ specter_workdir/
 
 See the [Configuration Section](#configuration) for more information.
 
-  * `exclude _list.txt`: List of IPs or IP ranges NOT to scan
-  * `settings.toml`: Configuration file of operational settings to read in
+### Output Files
 
 * `init`
   * `settings.toml`: Specter configuration file containing all operational settings
