@@ -3,7 +3,7 @@ import shutil
 
 from specter.commands import Command
 from specter.enums import Applications
-from specter.utils import log_info, log_warning, print_tree
+from specter.utils import log_info, log_warning, log_success, print_tree
 
 
 class Init(Command):
@@ -46,11 +46,12 @@ class Init(Command):
         exists_already = os.path.exists('.specter')
         if exists_already:
             log_warning(
-                "Specter directory already initialized. Please re-run `specter init --help` for further options.\n"
+                "Specter work directory already initialized. Please re-run `specter init --help` for further options.\n"
             )
             print_tree()
         else:
             self._build_specter_folder_structure()
             self._copy_samples_to_target_folders()
-            print()
+            log_success("Specter work directory initialized under %s.\n" %
+                        self._root_output_directory)
             print_tree()

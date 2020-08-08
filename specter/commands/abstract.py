@@ -4,7 +4,9 @@ import os
 import subprocess
 
 import inflection
+
 from specter import exceptions
+from specter.utils import log_info, log_success
 
 
 class Command(object, metaclass=ABCMeta):
@@ -13,11 +15,11 @@ class Command(object, metaclass=ABCMeta):
     APPLICATION = None
 
     @classmethod
-    def validate_binary(cls):
+    def validate_application_exists(cls):
         """Validates that the application binary specified by `self.APPLICATION` exists in the system."""
+        # Only perform the check for commands that have a 3rd-party application dependency.
         if cls.APPLICATION is None:
-            raise TypeError("APPLICATION must be defined for class: %s" %
-                            cls.__name__)
+            return
 
         command = "command -v %s" % cls.APPLICATION
         output = subprocess.run(command,
@@ -25,7 +27,7 @@ class Command(object, metaclass=ABCMeta):
                                 universal_newlines=True,
                                 capture_output=True)
         if output.returncode != 0:
-            raise exceptions.AppDependencyNotFoundError(
+            raise exceptions.AppDependencyNotFoundException(
                 "Could not find application '%s' required to run this command. Please install it then try again."
                 % cls.APPLICATION)
 
@@ -45,14 +47,13 @@ class Command(object, metaclass=ABCMeta):
                 cls.__name__)
 
         op_name = inflection.underscore(cls.__name__)
-        print('Running %s operation...' % op_name)
-        print(
-            'Calling %s via subprocess.run() with the following command:\n\n%s'
+        log_info('Running %s operation...' % op_name)
+        log_info(
+            'Calling %s via subprocess.run() with the following command:\n\n%s\n'
             % (cls.APPLICATION, command))
-        print()
 
         def handle_error(process):
-            raise exceptions.SubprocessExecutionError(
+            raise exceptions.SubprocessExecutionException(
                 "Failed to execute operation '%s'. Reason: subprocess.run() returned non-zero exit status %d for last-executed command."
                 % (op_name, process.returncode))
 
@@ -68,7 +69,7 @@ class Command(object, metaclass=ABCMeta):
             if proc.returncode != 0:
                 handle_error(proc)
 
-        print("Successfully finished '%s' operation." % op_name)
+        log_success("Successfully finished '%s' operation." % op_name)
 
     @classmethod
     def validate_input_file_path(cls, file_path, settings_alias):
@@ -118,7 +119,7 @@ class Command(object, metaclass=ABCMeta):
         }
         for directory in subdirectories:
             if not os.path.isdir(directory):
-                print('Creating output sub-directories: %s' % directory)
+                log_info('Creating output sub-directories: %s' % directory)
             os.makedirs(directory, exist_ok=True)
 
         return output_directory
@@ -134,8 +135,7 @@ class Command(object, metaclass=ABCMeta):
                 def __init__(self):
                     super().__init__()
         """
-        if self.APPLICATION:
-            self.validate_binary()
+        self.validate_application_exists()
 
     @abstractmethod
     def execute(self):

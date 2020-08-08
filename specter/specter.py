@@ -133,7 +133,8 @@ def main():
 
     try:
         command.execute()
-    except exceptions.SubprocessExecutionError as e:
+    except (exceptions.SubprocessExecutionException,
+            exceptions.OutputParseException) as e:
         print()
         parser.error(e)
     else:
