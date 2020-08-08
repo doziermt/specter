@@ -153,7 +153,7 @@ class XmlScan(Command):
 
         all_ip_addresses = set()
 
-        for (portid, protocol) in self.WEB_PORTS_TO_SCAN:
+        for (protocol, portid) in self.WEB_PORTS_TO_SCAN:
             try:
                 ip_addresses = self._parse_masscan_xml_for_ip_addresses(
                     root, protocol, portid)
