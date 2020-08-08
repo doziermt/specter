@@ -82,7 +82,7 @@ class Command(object, metaclass=ABCMeta):
                                   access_level=os.R_OK)
 
     @classmethod
-    def validate_output_file_path(cls, file_path, settings_alias):
+    def validate_output_file_path(cls, file_path, settings_alias=None):
         """Validates that user has permissions to read ``file_path``."""
         directory_path = os.path.dirname(file_path)
         cls._validate_path_access(directory_path,
@@ -148,7 +148,7 @@ class Command(object, metaclass=ABCMeta):
             else:
                 raise IOError(
                     'Path "%s" could not be written to. Please validate the Specter Work Directory folder permissions.'
-                    % (path, settings_alias))
+                    % path)
 
     @abstractmethod
     def __init__(self):

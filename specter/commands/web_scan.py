@@ -21,9 +21,15 @@ class WebScan(Command):
         """
         path = os.path.join(
             self.output_directory,
-            self.SETTINGS['xml_scan']['clean_target_list_file_name'])
+            self.SETTINGS['web_scan']['clean_target_list_file_name'])
         self.validate_input_file_path(
-            path, "[xml_scan].clean_target_list_file_name")
+            path, "[web_scan].clean_target_list_file_name")
+        return path
+
+    @property
+    def eyewitness_output_file(self):
+        path = os.path.join(self.output_directory, 'web_reports', 'eyewitness')
+        self.validate_output_file_path(path)
         return path
 
     @property
@@ -42,6 +48,6 @@ class WebScan(Command):
             '--add-https-ports', self.ports, '--no-prompt', '--threads 4',
             '--jitter',
             '%s' % self.jitter, '-f', self.clean_target_list_file_name,
-            '-d output/web_reports/eyewitness'
+            '-d %s' % self.eyewitness_output_file
         ])
         self.run_command(command)
