@@ -16,12 +16,14 @@ class WebScan(Command):
 
     @property
     def clean_target_list_file_name(self):
-        """First checks whether web_scan has generated the clean target list for this operation
+        """First checks whether xml_scan has generated the clean target list for this operation
         and then returns the configuration value.
         """
         path = os.path.join(
             self.output_directory,
             self.SETTINGS['web_scan']['clean_target_list_file_name'])
+        self.validate_input_file_path(
+            path, "[web_scan].clean_target_list_file_name")
         return path
 
     @property
@@ -34,6 +36,7 @@ class WebScan(Command):
 
     def execute(self):
         """Executes the web_scan command, currently only supports eyewitness."""
+        # TODO: Validate `output/web_reports/eyewitness` output file path.
         command = " ".join([
             self.APPLICATION, '--web', '--add-http-ports', self.ports,
             '--add-https-ports', self.ports, '--no-prompt', '--threads 4',

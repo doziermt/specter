@@ -135,7 +135,6 @@ def main():
         command.execute()
     except (exceptions.SubprocessExecutionException,
             exceptions.OutputParseException) as e:
-        print()
         parser.error(e)
     else:
         parser.exit()
