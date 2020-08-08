@@ -56,7 +56,7 @@ including configuration and output files. The output files include intermediary 
 These files can be visualized by running `specter tree`:
 
 ```
-.specter/
+specter_workdir/
 ├── input/
 │   ├── exclude_list.txt
 │   └── target_list.txt
@@ -162,7 +162,7 @@ created.
 For example, running `specter init` followed by `specter clean_list` will generate the following Work Directory structure:
 
 ```
-.specter/
+specter_workdir/
 ├── input/
 │   ├── exclude_list.txt
 │   └── target_list.txt
@@ -183,7 +183,7 @@ In the example above, `test_2020-08-08_11:00:59.155506/` is the "snapshot" gener
 To create a new snapsphot, simply re-run `clean_list` which will produce an output structure similar to the following:
 
 ```
-.specter/
+specter_workdir/
 ├── input/
 │   ├── exclude_list.txt
 │   └── target_list.txt

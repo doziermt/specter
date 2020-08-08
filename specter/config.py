@@ -21,7 +21,7 @@ def validate_settings(settings_file_path=None):
     global SETTINGS
 
     settings_file_path = settings_file_path or os.path.join(
-        os.getcwd(), '.specter', 'settings.toml')
+        os.getcwd(), 'specter_workdir', 'settings.toml')
 
     if not os.path.exists(settings_file_path):
         raise FileNotFoundError(
