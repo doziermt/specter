@@ -47,3 +47,6 @@ jobs:
     - name: Test package upload with twine
       run: |
         tox -e package-test-upload
+      env:
+        TWINE_USERNAME: ${{ secret.TWINE_USERNAME }}
+        TWINE_PASSWORD: ${{ secret.TWINE_PASSWORD }}
