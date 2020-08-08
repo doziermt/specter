@@ -1,5 +1,5 @@
 [general]
-# (required) The site name. Prepended to each generated output file.
+# (required) The site name.
 sitename = "test"
 
 [clean_list]
