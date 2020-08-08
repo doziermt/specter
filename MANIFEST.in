@@ -1,1 +1,1 @@
-include specter/samples/settings.sample.toml
+graft samples/

@@ -23,7 +23,7 @@ class Init(Command):
 
     def _copy_samples_to_target_folders(self):
         current_directory = os.path.dirname(os.path.realpath(__file__))
-        source_root_path = os.path.join(current_directory, os.pardir,
+        source_root_path = os.path.join(current_directory, os.pardir, os.pardir,
                                         'samples')
 
         for file_to_copy in os.listdir(source_root_path):
