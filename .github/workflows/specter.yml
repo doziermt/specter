@@ -30,7 +30,3 @@ jobs:
     - name: Lint with yapf
       run: |
         tox -e lint
-
-    - name: Validate sample config
-      run: |
-        tox -e validate-sample-config
