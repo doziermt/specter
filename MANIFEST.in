@@ -1,1 +1,2 @@
 graft specter/
+include requirements.txt

@@ -1,9 +1,18 @@
+import pathlib
+
+import pkg_resources
 import setuptools
 
 from specter import __version__
 
 with open('README.md', 'r') as f:
     long_description = f.read()
+
+with pathlib.Path('requirements.txt').open() as requirements_txt:
+    install_requires = [
+        str(requirement)
+        for requirement in pkg_resources.parse_requirements(requirements_txt)
+    ]
 
 setuptools.setup(name='specter',
                  version=__version__,
@@ -17,6 +26,7 @@ setuptools.setup(name='specter',
                  keywords=['Linux', 'Security', 'Python'],
                  packages=setuptools.find_packages(),
                  include_package_data=True,
+                 install_requires=install_requires,
                  classifiers=[
                      'Development Status :: 3 - Alpha',
                      'Intended Audience :: Developers',
