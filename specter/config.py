@@ -42,10 +42,10 @@ def validate_settings(settings_file_path=None):
                                       must_exist=True,
                                       is_type_of=str),
                             Validator('clean_list', must_exist=True),
-                            Validator('clean_list.nmap_exclude_list',
+                            Validator('clean_list.nmap_target_list_file_name',
                                       must_exist=True,
                                       is_type_of=str),
-                            Validator('clean_list.nmap_target_list',
+                            Validator('clean_list.nmap_target_list_file_name',
                                       must_exist=True,
                                       is_type_of=str),
                             Validator('web_scan', must_exist=True),
@@ -81,6 +81,34 @@ def validate_settings(settings_file_path=None):
     SETTINGS.validators.validate()
     validate_port_settings(SETTINGS)
     validate_ip_address_settings(SETTINGS)
+
+
+def load_clean_list_file_input(settings_name, filepath):
+    abspath = os.path.abspath(filepath)
+    if not os.path.exists(abspath):
+        specter_workdir_path = os.path.join(os.getcwd(), 'specter_workdir')
+        abspath = os.path.join(specter_workdir_path, filepath)
+        if not os.path.exists(abspath):
+            reason = "Could not resolve the file path: %s" % filepath
+            raise ValidationError(
+                "Failed validation for `[clean_list].%s`. Reason: %s" %
+                (settings_name, reason))
+    with open(abspath) as f:
+        lines = [line.strip() for line in f.readlines()]
+    return lines
+
+
+def load_clean_list_file_path(settings_name, filepath):
+    abspath = os.path.abspath(filepath)
+    if not os.path.exists(abspath):
+        specter_workdir_path = os.path.join(os.getcwd(), 'specter_workdir')
+        abspath = os.path.join(specter_workdir_path, filepath)
+        if not os.path.exists(abspath):
+            reason = "Could not resolve the file path: %s" % filepath
+            raise ValidationError(
+                "Failed validation for `[clean_list].%s`. Reason: %s" %
+                (settings_name, reason))
+    return abspath
 
 
 def validate_ip_addresses(ip_addresses):
@@ -121,10 +149,15 @@ def validate_ip_addresses(ip_addresses):
         else:
             return validate_ip_address(ip_address_option)
 
-    if not ip_addresses:
-        return False, ["A valid list of IP addresses must be provided"]
+    if isinstance(ip_addresses, list):
+        if ip_addresses is None:
+            return False, ["A valid list of IP addresses must be provided"]
+        ip_address_list = ip_addresses
+    else:
+        if not ip_addresses:
+            return False, ["A valid list of IP addresses must be provided"]
+        ip_address_list = ip_addresses.split(',')
 
-    ip_address_list = ip_addresses.split(',')
     validation_results = [
         validate_ip_address_option(ip_address)
         for ip_address in ip_address_list
@@ -191,8 +224,12 @@ def validate_port_settings(settings):
 
 def validate_ip_address_settings(settings):
     """Validates that each of the IP address settings are valid."""
-    # Validate nmap_target_list.
-    nmap_target_list = settings.clean_list.nmap_target_list
+    # Validate nmap_target_list filepath.
+    nmap_target_list = load_clean_list_file_input(
+        "nmap_target_list_file_name",
+        settings.clean_list.nmap_target_list_file_name)
+
+    # Validate nmap_target_list IP addresses.
     nmap_target_list_validation_results = validate_ip_addresses(
         nmap_target_list)
     if not nmap_target_list_validation_results[0]:
@@ -200,8 +237,12 @@ def validate_ip_address_settings(settings):
             "Failed validation for `[clean_list].nmap_target_list`. Reason: %s"
             ",".join(nmap_target_list_validation_results[1]))
 
-    # Validate nmap_exclude_list.
-    nmap_exclude_list = settings.clean_list.nmap_exclude_list
+    # Validate nmap_exclude_list filepath.
+    nmap_exclude_list = load_clean_list_file_input(
+        "nmap_exclude_list_file_name",
+        settings.clean_list.nmap_exclude_list_file_name)
+
+    # Validate nmap_exclude_list IP addresses.
     nmap_exclude_list_validation_results = validate_ip_addresses(
         nmap_exclude_list)
     if not nmap_exclude_list_validation_results[0]:

@@ -3,7 +3,7 @@ import os
 import tempfile
 
 from specter.commands import Command
-from specter.config import load_settings
+from specter.config import load_clean_list_file_input, load_clean_list_file_path, load_settings
 from specter.enums import Applications
 
 
@@ -11,22 +11,17 @@ class CleanList(Command):
     APPLICATION = Applications.NMAP.value
 
     @property
-    def nmap_target_list(self):
-        return self.SETTINGS.clean_list.nmap_target_list
-
-    @property
     def nmap_target_list_file(self):
-        # Create a temporary file to pass to nmap because it doesn't seem to support a
-        # comma-delimited string of IP addresses.
-        _, temporary_file = tempfile.mkstemp(prefix='specter')
-        with open(temporary_file, 'w') as f:
-            f.writelines(
-                ["%s\n" % line for line in self.nmap_target_list.split(",")])
-        return temporary_file
+        return load_clean_list_file_path(
+            "nmap_target_list_file_name",
+            self.SETTINGS.clean_list.nmap_target_list_file_name)
 
     @property
     def nmap_exclude_list(self):
-        return self.SETTINGS.clean_list.nmap_exclude_list
+        file_lines = load_clean_list_file_input(
+            "nmap_exclude_list_file_name",
+            self.SETTINGS.clean_list.nmap_exclude_list_file_name)
+        return ",".join(file_lines)
 
     @property
     def xml_clean_target_list_file_name(self):
@@ -53,8 +48,11 @@ class CleanList(Command):
 
         command = [
             self.APPLICATION, "-sL", "-n", "-iL", self.nmap_target_list_file,
-            "--exclude", self.nmap_exclude_list, "-oN", temporary_file
+            "-oN", temporary_file
         ]
+        if self.nmap_exclude_list:
+            command.extend(["--exclude", self.nmap_exclude_list])
+
         self.run_command(command)
 
         with open(temporary_file, 'r') as readfile:
