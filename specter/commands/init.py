@@ -3,7 +3,7 @@ import shutil
 
 from specter.commands import Command
 from specter.enums import Applications
-from specter.utils import log_info, log_warning, log_success, print_tree
+from specter.utils import print_tree
 
 
 class Init(Command):
@@ -15,8 +15,8 @@ class Init(Command):
                                                    root_output_directory)
 
     def _build_specter_folder_structure(self):
-        log_info('Creating specter input & output directories under: "%s"' %
-                 self._root_output_directory)
+        print('Creating specter input & output directories under: "%s"' %
+              self._root_output_directory)
         os.makedirs(self._root_output_directory, exist_ok=True)
         os.makedirs(os.path.join(self._root_output_directory, 'output'),
                     exist_ok=True)
@@ -35,20 +35,20 @@ class Init(Command):
                     target_file_path = os.path.join(os.getcwd(),
                                                     'specter_workdir',
                                                     new_file_name)
-                    log_info('Copying input file "%s" to: "%s"' %
-                             (new_file_name, target_file_path))
+                    print('Copying input file "%s" to: "%s"' %
+                          (new_file_name, target_file_path))
                     shutil.copyfile(source_file_path, target_file_path)
 
     def execute(self):
         exists_already = os.path.exists('specter_workdir')
         if exists_already:
-            log_warning(
+            print(
                 "Specter work directory already initialized. Please re-run `specter init --help` for further options.\n"
             )
             print_tree()
         else:
             self._build_specter_folder_structure()
             self._copy_samples_to_target_folders()
-            log_success("Specter work directory initialized under %s.\n" %
-                        self._root_output_directory)
+            print("Specter work directory initialized under %s.\n" %
+                  self._root_output_directory)
             print_tree()

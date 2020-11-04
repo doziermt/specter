@@ -1,8 +1,6 @@
 import os
 from pathlib import Path
 
-from specter.utils import log_warning
-
 
 class DisplayablePath(object):
     """Diplays a directory tree structure using UNIX "tree"-like formatting.
@@ -87,6 +85,6 @@ def print_tree(root='specter_workdir'):
         for path in paths:
             print(path.displayable())
     else:
-        log_warning(
+        print(
             "The specter directory does not exist. Please run `specter init` first."
         )

@@ -6,7 +6,6 @@ import subprocess
 import inflection
 
 from specter import exceptions
-from specter.utils import log_info, log_success
 
 
 class Command(object, metaclass=ABCMeta):
@@ -54,8 +53,8 @@ class Command(object, metaclass=ABCMeta):
         command_to_run = ' '.join(command)
         op_name = inflection.underscore(cls.__name__)
 
-        log_info('Running %s operation...' % op_name)
-        log_info(
+        print('Running %s operation...' % op_name)
+        print(
             'Calling %s via subprocess.run() with the following command:\n\n%s\n'
             % (cls.APPLICATION, command_to_run))
 
@@ -75,7 +74,7 @@ class Command(object, metaclass=ABCMeta):
             if proc.returncode != 0:
                 handle_error(proc)
 
-        log_success("Successfully finished '%s' operation." % op_name)
+        print("Successfully finished '%s' operation." % op_name)
 
     @classmethod
     def validate_input_file_path(cls, file_path, settings_alias):
@@ -134,7 +133,7 @@ class Command(object, metaclass=ABCMeta):
         }
         for directory in subdirectories:
             if not os.path.isdir(directory):
-                log_info('Creating output sub-directories: %s' % directory)
+                print('Creating output sub-directories: %s' % directory)
             os.makedirs(directory, exist_ok=True)
 
         return output_directory

@@ -274,7 +274,7 @@ Example commands:
 
 **TIP**:
 
-> Running `specter --help` will output help documentation to the CLI.
+> Running `specter --help` or `specter -h` will output help documentation to the CLI.
 
 ### Dev Environment - Tools
 
