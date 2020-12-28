@@ -4,7 +4,7 @@
 
 > Currenlty Tested on KALI 2020.2
 
-Specter Recon Tool is a [KALI Linux](https://www.kali.org/) tool for...
+Specter Recon Tool is a [KALI Linux](https://www.kali.org/) CLI tool for...
 
 #### Contents
 
@@ -19,7 +19,7 @@ Specter Recon Tool is a [KALI Linux](https://www.kali.org/) tool for...
 ## Prerequisites
 
 Specter should ideally be run on [KALI Linux](https://www.kali.org/). Specter uses the following **required**
-3rd-party scanning tools (that come pre-installed on KALI):
+third-party scanning tools (that come pre-installed on KALI):
 
 - [Nmap](https://nmap.org/) for generating a "clean target list"
 - [Masscan](https://github.com/robertdavidgraham/masscan) for performing port scan operations efficiently
@@ -35,7 +35,25 @@ WIP
 
 ### Running Specter
 
-WIP
+The following commands must be executed in order.
+
+* To run `init`:
+
+  > specter init
+
+* To run `clean_list`:
+
+  > specter clean_list
+
+* To run `xml_scan`:
+
+  > specter xml_scan
+
+* To run `web_scan`:
+
+  >  specter web_scan
+
+For a list of additional commands to run, please execute `specter --help`.
 
 ## Configuration
 
@@ -214,35 +232,25 @@ In the example above, 2 "snapshots" can be seen:
 
 ## Developer Guide
 
-### Dev Environment - Setup
+### Dev Environment - Environment Setup
 
 1. Install Python 3: https://www.python.org/downloads/
 2. Install `pip`: https://pip.pypa.io/en/stable/installing/
 3. Install `tox` using `pip` by running `pip install tox` in your terminal
 
-### Dev Environment - Running Specter CLI
+### Dev Environment - Installing Specter CLI
 
-To run any of the [Supported Commands](#supported-commands), use `tox` as the entrypoint:
+To run any of the [Supported Commands](#supported-commands), first install the specter CLI using `pip`:
 
 ```
-tox -e specter -- <COMMAND>
+cd specter/
+pip install -r requirements.txt
+pip install -e .
 ```
 
-Examples:
+Afterward, see the [Running Specter](#running-specter) for a list of available commands to run.
 
-* To run `clean_list`:
-
-  > tox -e specter -- clean_list
-
-* To run `xml_scan`:
-
-  > tox -e specter -- xml_scan
-
-* To run `web_scan`:
-
-  > tox -e specter -- web_scan
-
-### Dev Environment - Tools
+### Dev Environment - Dev Tools
 
 This project makes use of [tox](https://tox.readthedocs.io/en/latest/) to facilitate testing for developers.
 The following tox commands can be used:
