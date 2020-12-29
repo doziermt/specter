@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from specter.utils import log_warning
+from specter.utils import log_warning, workdir
 
 
 class DisplayablePath(object):
@@ -81,9 +81,10 @@ class DisplayablePath(object):
         return ''.join(reversed(parts))
 
 
-def print_tree(root='specter_workdir'):
-    if os.path.exists(root):
-        paths = DisplayablePath.make_tree(Path(root))
+def print_tree():
+    workdir_path = workdir.resolve()
+    if os.path.exists(workdir_path):
+        paths = DisplayablePath.make_tree(Path(workdir_path))
         for path in paths:
             print(path.displayable())
     else:
