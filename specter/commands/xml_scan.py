@@ -7,7 +7,6 @@ from specter.commands import Command
 from specter.config import load_settings
 from specter.enums import Applications
 from specter import exceptions
-from specter.utils import log_warning
 
 
 class XmlScan(Command):
@@ -153,7 +152,7 @@ class XmlScan(Command):
             tree = ElementTree.parse(self.masscan_xml_path)
             root = tree.getroot()
         except ElementTree.ParseError as e:
-            return log_warning(
+            return print(
                 "XML file [%s] could not be parsed because it is most likely empty. Skipping."
                 % self.masscan_xml_path)
 
