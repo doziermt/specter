@@ -7,6 +7,7 @@ from specter.commands import Command
 from specter.config import load_settings
 from specter.enums import Applications
 from specter import exceptions
+from specter.utils import log_warning
 
 
 class XmlScan(Command):
@@ -148,8 +149,13 @@ class XmlScan(Command):
             out.writelines("\n".join([str(x) for x in ip_addresses]))
 
     def _generate_output_files_from_masscan_xml(self):
-        tree = ElementTree.parse(self.masscan_xml_path)
-        root = tree.getroot()
+        try:
+            tree = ElementTree.parse(self.masscan_xml_path)
+            root = tree.getroot()
+        except ElementTree.ParseError as e:
+            return log_warning(
+                "XML file [%s] could not be parsed because it is most likely empty. Skipping."
+                % self.masscan_xml_path)
 
         all_ip_addresses = set()
 
