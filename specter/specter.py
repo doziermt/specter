@@ -5,7 +5,8 @@ import os
 from specter.commands import CleanList, Command, Init, Tree, WebScan, XmlScan
 from specter.config import validate_settings
 from specter.enums import Applications, Commands
-from specter import __version__, exceptions, log_info, workdir
+from specter import __version__, exceptions
+from specter.utils import log_info, workdir
 
 global INFO
 

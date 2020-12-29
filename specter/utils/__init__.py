@@ -1,3 +1,4 @@
+from specter.utils.log import log_error, log_info, log_success, log_warning
 from specter.utils.tree import print_tree
 from specter.utils.workdir import resolve
 

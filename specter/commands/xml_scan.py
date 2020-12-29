@@ -6,7 +6,8 @@ from xml.etree import ElementTree
 from specter.commands import Command
 from specter.config import load_settings
 from specter.enums import Applications
-from specter import exceptions, log_warning
+from specter import exceptions
+from specter.utils import log_warning
 
 
 class XmlScan(Command):

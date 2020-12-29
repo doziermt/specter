@@ -15,7 +15,7 @@ class Init(Command):
 
     def _build_specter_folder_structure(self):
         log_info('Creating specter input & output directories under: "%s"' %
-              self._root_output_directory)
+                 self._root_output_directory)
         os.makedirs(self._root_output_directory, exist_ok=True)
         os.makedirs(os.path.join(self._root_output_directory, 'output'),
                     exist_ok=True)
@@ -48,5 +48,5 @@ class Init(Command):
             self._build_specter_folder_structure()
             self._copy_samples_to_target_folders()
             log_success("Specter work directory initialized under %s.\n" %
-                  self._root_output_directory)
+                        self._root_output_directory)
             print_tree()
