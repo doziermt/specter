@@ -6,7 +6,7 @@ import subprocess
 import inflection
 
 from specter import exceptions
-from specter.utils import log_info, log_success
+from specter.utils import log_info, log_success, workdir
 
 
 class Command(object, metaclass=ABCMeta):
@@ -99,8 +99,7 @@ class Command(object, metaclass=ABCMeta):
         sitename,
         use_existing,
     ):
-        root_output_directory = os.path.join(os.getcwd(), 'specter_workdir',
-                                             'output')
+        root_output_directory = os.path.join(workdir.resolve(), 'output')
 
         def _generate_new_subdirectory_name(sitename):
             new_timestamp = str(datetime.now()).replace(' ', '_')

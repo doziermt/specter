@@ -6,6 +6,7 @@ from specter.commands import CleanList, Command, Init, Tree, WebScan, XmlScan
 from specter.config import validate_settings
 from specter.enums import Applications, Commands
 from specter import exceptions
+from specter.utils import workdir
 
 global INFO
 
@@ -102,9 +103,8 @@ def get_command_from_name(alias):
     return command
 
 
-def load_settings(root_output_directory='specter_workdir'):
-    settings_file_path = os.path.join(os.getcwd(), root_output_directory,
-                                      'settings.toml')
+def load_settings():
+    settings_file_path = os.path.join(workdir.resolve(), 'settings.toml')
     validate_settings(settings_file_path=settings_file_path)
 
 
