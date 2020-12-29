@@ -120,13 +120,28 @@ def validate_ip_addresses(ip_addresses):
         return True, None
 
     def validate_ip_address_range(ip_address_range):
+        def validate_range_value(value):
+            return value >= 0 and value < 255
+
         try:
-            first, last_part = ip_address_range.split('-')
-            last = '.'.join(first.rsplit('.')[:-1]) + '.' + last_part
-            first_ip_address = ipaddress.ip_address(first)
-            last_ip_address = ipaddress.ip_address(last)
-            ipaddress.summarize_address_range(first_ip_address,
-                                              last_ip_address)
+            parts = ip_address_range.split('.')
+            if len(parts) != 4:
+                return False, "%s is not a valid IP address range: malformatted IP range" % ip_address_range
+            for part in parts:
+                if '-' in part:
+                    start, end = part.split('-')
+                    start_val = int(start)
+                    end_val = int(end)
+
+                    if not validate_range_value(start_val):
+                        return False, "%s is not a valid IP address range: start range value illegal" % ip_address_range
+                    if not validate_range_value(end_val):
+                        return False, "%s is not a valid IP address range: end range value illegal" % ip_address_range
+                    if start_val > end_val:
+                        return False, "%s is not a valid IP address range: start range value bigger than end range value" % ip_address_range
+                else:
+                    if not validate_range_value(int(part)):
+                        return False, "%s is not a valid IP address range: IP value illegal" % ip_address_range
         except Exception:
             return False, "%s is not a valid IP address range" % ip_address_range
         return True, None
