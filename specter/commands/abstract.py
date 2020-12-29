@@ -6,6 +6,7 @@ import subprocess
 import inflection
 
 from specter import exceptions
+from specter.utils import log_info, log_success, workdir
 
 
 class Command(object, metaclass=ABCMeta):
@@ -53,8 +54,8 @@ class Command(object, metaclass=ABCMeta):
         command_to_run = ' '.join(command)
         op_name = inflection.underscore(cls.__name__)
 
-        print('Running %s operation...' % op_name)
-        print(
+        log_info('Running %s operation...' % op_name)
+        log_info(
             'Calling %s via subprocess.run() with the following command:\n\n%s\n'
             % (cls.APPLICATION, command_to_run))
 
@@ -74,7 +75,7 @@ class Command(object, metaclass=ABCMeta):
             if proc.returncode != 0:
                 handle_error(proc)
 
-        print("Successfully finished '%s' operation." % op_name)
+        log_success("Successfully finished '%s' operation." % op_name)
 
     @classmethod
     def validate_input_file_path(cls, file_path, settings_alias):
@@ -98,8 +99,7 @@ class Command(object, metaclass=ABCMeta):
         sitename,
         use_existing,
     ):
-        root_output_directory = os.path.join(os.getcwd(), 'specter_workdir',
-                                             'output')
+        root_output_directory = os.path.join(workdir.resolve(), 'output')
 
         def _generate_new_subdirectory_name(sitename):
             new_timestamp = str(datetime.now()).replace(' ', '_')
@@ -133,7 +133,7 @@ class Command(object, metaclass=ABCMeta):
         }
         for directory in subdirectories:
             if not os.path.isdir(directory):
-                print('Creating output sub-directories: %s' % directory)
+                log_info('Creating output sub-directories: %s' % directory)
             os.makedirs(directory, exist_ok=True)
 
         return output_directory

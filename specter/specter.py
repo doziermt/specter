@@ -5,7 +5,7 @@ import os
 from specter.commands import CleanList, Command, Init, Tree, WebScan, XmlScan
 from specter.config import validate_settings
 from specter.enums import Applications, Commands
-from specter import __version__, exceptions
+from specter import __version__, exceptions, log_info, workdir
 
 global INFO
 
@@ -67,7 +67,7 @@ def _init_clean_list_parser(subparsers):
 def _init_xml_scan_parser(subparsers):
     """Argument parser for xml_scan operation."""
     port_scan_parser = subparsers.add_parser(
-        Commands.XML_SCAN.value, help='Execute an xml scan using masscan')
+        Commands.XML_SCAN.value, help='Execute an XML scan using masscan')
 
 
 def _init_web_scan_parser(subparsers):
@@ -103,14 +103,13 @@ def get_command_from_name(alias):
     return command
 
 
-def load_settings(root_output_directory='specter_workdir'):
-    settings_file_path = os.path.join(os.getcwd(), root_output_directory,
-                                      'settings.toml')
+def load_settings():
+    settings_file_path = os.path.join(workdir.resolve(), 'settings.toml')
     validate_settings(settings_file_path=settings_file_path)
 
 
 def main():
-    print(INFO)
+    log_info(INFO)
 
     parser = argparse.ArgumentParser(prog='specter')
     subparsers = parser.add_subparsers(title='subcommands',

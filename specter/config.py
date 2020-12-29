@@ -1,11 +1,12 @@
+import ipaddress
 import os
 import sys
 import traceback
 
-import ipaddress
-
 from dynaconf import Dynaconf, Validator
 from dynaconf.validator import ValidationError
+
+from specter.utils import workdir
 
 SETTINGS = None
 
@@ -22,7 +23,7 @@ def validate_settings(settings_file_path=None):
     global SETTINGS
 
     settings_file_path = settings_file_path or os.path.join(
-        os.getcwd(), 'specter_workdir', 'settings.toml')
+        workdir.resolve(), 'settings.toml')
 
     if not os.path.exists(settings_file_path):
         raise FileNotFoundError(
@@ -86,8 +87,7 @@ def validate_settings(settings_file_path=None):
 def load_clean_list_file_input(settings_name, filepath):
     abspath = os.path.abspath(filepath)
     if not os.path.exists(abspath):
-        specter_workdir_path = os.path.join(os.getcwd(), 'specter_workdir')
-        abspath = os.path.join(specter_workdir_path, filepath)
+        abspath = os.path.join(workdir.resolve(), filepath)
         if not os.path.exists(abspath):
             reason = "Could not resolve the file path: %s" % filepath
             raise ValidationError(
@@ -101,8 +101,7 @@ def load_clean_list_file_input(settings_name, filepath):
 def load_clean_list_file_path(settings_name, filepath):
     abspath = os.path.abspath(filepath)
     if not os.path.exists(abspath):
-        specter_workdir_path = os.path.join(os.getcwd(), 'specter_workdir')
-        abspath = os.path.join(specter_workdir_path, filepath)
+        abspath = os.path.join(workdir.resolve(), filepath)
         if not os.path.exists(abspath):
             reason = "Could not resolve the file path: %s" % filepath
             raise ValidationError(
