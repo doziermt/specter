@@ -4,7 +4,7 @@
 
 > Currenlty Tested on KALI 2020.2
 
-Specter Recon Tool is a [KALI Linux](https://www.kali.org/) tool for...
+Specter Recon Tool is a [KALI Linux](https://www.kali.org/) CLI tool for...
 
 #### Contents
 
@@ -18,8 +18,8 @@ Specter Recon Tool is a [KALI Linux](https://www.kali.org/) tool for...
 
 ## Prerequisites
 
-Specter should ideally be run on [KALI Linux](https://www.kali.org/) as the **root user**.
-Specter uses the following **required** 3rd-party scanning tools (that come pre-installed on KALI):
+Specter should ideally be run on [KALI Linux](https://www.kali.org/). Specter uses the following **required**
+third-party scanning tools (that come pre-installed on KALI):
 
 - [Nmap](https://nmap.org/) for generating a "clean target list"
 - [Masscan](https://github.com/robertdavidgraham/masscan) for performing port scan operations efficiently
@@ -31,37 +31,29 @@ If applicable, please follow the links above for information on installing each 
 
 ### Installing Specter
 
-This project uses PyPi for package management, and `pip` is required to install the `specter` package.
-
-If you do not have `pip` installed, follow the [installation instructions](https://pip.pypa.io/en/stable/installing/).
-
-Afterward, run:
-
-> pip install -i https://test.pypi.org/simple/ specter
-
-To sanity-check that it has been installed correctly, run:
-
-> specter -h
+WIP
 
 ### Running Specter
 
-1. First, initialize the [Specter Work Directory](#specter-work-directory) by running `specter init`
-   This will create a directory called `specter_workdir` *within your current working directory*
-2. Open up the `settings.toml` file -- with the editor of your choice -- located at `specter_workdir/settings.toml`
-3. Update the following setting options to work with your network configuration:
+The following commands must be executed in order.
 
-   * `[general].sitename`
-   * `[clean_list].nmap_target_list`
-   * `[clean_list].nmap_exclude_list`
-   * `[xml_scan].masscan_ip`
-   * `[xml_scan].interface`
+* To run `init`:
 
-4. Execute `specter clean_list` to generate the clean target list using `nmap`
-5. Execute `specter xml_scan` to perform a port scan using `masscan`
-6. Execute `specter web_scan` to perform a web scan using `eyewitness`
-7. Execute `specter tree` to see all files in the [Specter Work Directory](#specter-work-directory)
+  > specter init
 
-For more information on `specter` commands, reference [Supported Commands](#supported-commands).
+* To run `clean_list`:
+
+  > specter clean_list
+
+* To run `xml_scan`:
+
+  > specter xml_scan
+
+* To run `web_scan`:
+
+  >  specter web_scan
+
+For a list of additional commands to run, please execute `specter --help`.
 
 ## Configuration
 
@@ -123,7 +115,7 @@ specter_workdir/
 
 **NOTE**:
 
-> Your [Specter Work Directory](#specter-work-directory) will contain different host and IP files dependending on your network configuration.
+> Your Specter work will may contain different host and IP files dependending on your network configuration.
 
 ### Configuration Files
 
@@ -240,60 +232,28 @@ In the example above, 2 "snapshots" can be seen:
 
 ## Developer Guide
 
-### Dev Environment - Setup
+### Dev Environment - Environment Setup
 
 1. Install Python 3: https://www.python.org/downloads/
 2. Install `pip`: https://pip.pypa.io/en/stable/installing/
 3. Install `tox` using `pip` by running `pip install tox` in your terminal
 
-### Dev Environment - Running Specter CLI
+### Dev Environment - Installing Specter CLI
 
-To run any of the [Supported Commands](#supported-commands), first `git clone` and then install the package using `pip|pip3`
+To run any of the [Supported Commands](#supported-commands), first install the specter CLI using `pip`:
 
 ```
-git clone https://github.com/doziermt/specter
-cd specter
-[pip|pip3] install -e .
+cd specter/
+pip install -r requirements.txt
+pip install -e .
 ```
 
-Afterward, `specter` can be called directly via the CLI.
+Afterward, see the [Running Specter](#running-specter) for a list of available commands to run.
 
-Example commands:
-
-* To run `clean_list`:
-
-  > specter clean_list
-
-* To run `xml_scan`:
-
-  > specter xml_scan
-
-* To run `web_scan`:
-
-  > specter web_scan
-
-**TIP**:
-
-> Running `specter --help` or `specter -h` will output help documentation to the CLI.
-
-### Dev Environment - Tools
+### Dev Environment - Dev Tools
 
 This project makes use of [tox](https://tox.readthedocs.io/en/latest/) to facilitate testing for developers.
-
-#### Tools for linting
+The following tox commands can be used:
 
 * `tox -e fmt`: Formats the Python project code using the Google linter tool, [yapf](https://github.com/google/yapf)
 * `tox -e lint`: Checks that the Python project code passes `yapf` linter checks
-
-#### Tools for package building and publishing
-
-Before executing these tox commands, first install [twine](https://pypi.org/project/twine/) *outside any virtual environment* by executing:
-
-```
-[pip|pip3] install twine
-```
-
-* `tox -e package-build`: Build the `specter` package distribution for publishing
-* `tox -e package-check`: Checks whether the distribution's description conforms to PyPi requirements
-* `tox -e package-test-upload`: Validates whether the distribution can successfully be uploaded to [TestPyPi](packaging.python.org/guides/using-testpypi)
-* `tox -e package-upload`: Uploads the distribution to [PyPi](https://pypi.org/)
