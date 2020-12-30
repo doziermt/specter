@@ -2,8 +2,6 @@ name: Specter Deploy Workflow
 
 on:
   push:
-    branches:
-    - master
     tags:
     - v*.*.*
 

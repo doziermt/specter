@@ -1,5 +1,8 @@
 # Specter Recon Tool
 
+![Specter PR Workflow](https://github.com/doziermt/specter/workflows/Specter%20PR%20Workflow/badge.svg)
+![Specter Deploy Workflow](https://github.com/doziermt/specter/workflows/Specter%20Deploy%20Workflow/badge.svg)
+
 **NOTE:**
 
 > Currenlty Tested on KALI 2020.2
