@@ -15,6 +15,7 @@ Specter Recon Tool is a [KALI Linux](https://www.kali.org/) CLI tool for...
 - [Supported Commands](#supported-commands)
 - [Specter Work Directory](#specter-work-directory)
 - [Developer Guide](#developer-guide)
+- [Release Guide](#release-guide)
 
 ## Prerequisites
 
@@ -257,3 +258,13 @@ The following tox commands can be used:
 
 * `tox -e fmt`: Formats the Python project code using the Google linter tool, [yapf](https://github.com/google/yapf)
 * `tox -e lint`: Checks that the Python project code passes `yapf` linter checks
+
+## Release Guide
+
+### GitHub Actions
+
+GitHub Actions will automatically execute the following `tox` commands to verify and publish the new release:
+
+* `tox -e package-check`: Checks whether your distribution’s long description will render correctly on PyPI.
+* `tox -e package-test-upload`: Uploads the new release to https://test.pypi.org/
+* `tox -e package-upload`: Uploads the new release to https://pypi.org/
