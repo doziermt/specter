@@ -3,7 +3,7 @@ name: Specter Deploy Workflow
 on:
   push:
     tags:
-    - v*.*.*
+    - '*'
 
 jobs:
 
