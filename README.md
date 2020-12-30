@@ -34,19 +34,19 @@ If applicable, please follow the links above for information on installing each 
 
 ## Getting Started
 
-Ensure that `pip` is installed.
+Ensure that `pip3` is installed.
 
 ### Installing Specter
 
 Execute:
 
-> pip install specter-kali
+> pip3 install specter-kali
 
 ### Upgrading Specter
 
 Execute:
 
-> pip install specter-kali --upgrade
+> pip3 install specter-kali --upgrade
 
 ### Running Specter
 
@@ -251,17 +251,17 @@ In the example above, 2 "snapshots" can be seen:
 ### Dev Environment - Environment Setup
 
 1. Install Python 3: https://www.python.org/downloads/
-2. Install `pip`: https://pip.pypa.io/en/stable/installing/
-3. Install `tox` using `pip` by running `pip install tox` in your terminal
+2. Install `pip3`: https://pip.pypa.io/en/stable/installing/
+3. Install `tox` using `pip3` by running `pip3 install tox` in your terminal
 
 ### Dev Environment - Installing Specter CLI
 
-To run any of the [Supported Commands](#supported-commands), first install the specter CLI using `pip`:
+To run any of the [Supported Commands](#supported-commands), first install the specter CLI using `pip3`:
 
 ```
 cd specter/
-pip install -r requirements.txt
-pip install -e .
+pip3 install -r requirements.txt
+pip3 install -e .
 ```
 
 Afterward, see the [Running Specter](#running-specter) for a list of available commands to run.
