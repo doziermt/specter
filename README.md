@@ -265,7 +265,11 @@ When ready to create a new release of `specter`, run the following command:
 
 > tox -e package-create -- [patch|minor|major]
 
-For example, to create a new `minor` release (assuming the existing one is 1.0.0), running `tox -e package-create -- minor` will automatically:
+For example, to create a new `minor` release (assuming the existing one is 1.0.0), execute:
+
+>  `tox -e package-create -- minor`
+
+This will automatically:
 
 * Update the `__version__` to 1.1.0 in `specter/__init__.py`
 * Create a 1.1.0 tagged commit for the release
