@@ -1,6 +1,6 @@
 # Specter Recon Tool
 
-[![pypi](https://pypip.in/v/blackhole/badge.svg)](https://pypi.org/project/specter-kali/)
+[![pypi](https://pypip.in/v/specter-kali/badge.svg)](https://pypi.org/project/specter-kali/)
 ![Specter PR Workflow](https://github.com/doziermt/specter/workflows/Specter%20PR%20Workflow/badge.svg)
 ![Specter Deploy Workflow](https://github.com/doziermt/specter/workflows/Specter%20Deploy%20Workflow/badge.svg)
 
