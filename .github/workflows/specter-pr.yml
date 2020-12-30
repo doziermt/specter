@@ -1,0 +1,31 @@
+name: Specter PR Workflow
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  validate:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v2
+  
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+ 
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install tox
+        pip install twine
+
+    - name: Lint with yapf
+      run: |
+        tox -e lint
