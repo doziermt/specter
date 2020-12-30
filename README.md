@@ -261,6 +261,17 @@ The following tox commands can be used:
 
 ## Release Guide
 
+When ready to create a new release of `specter`, run the following command:
+
+> tox -e package-create [patch|minor|major]
+
+For example, to create a new `minor` release (assuming the existing one is 1.0.0), running `tox -e package-create minor` will automatically:
+
+* Automatically update the `__version__` to 1.1.0 in `specter/__init__.py`
+* Create a 1.1.0 tagged commit for the release
+
+Afterward, `git push` the commit to the repository and merge it.
+
 ### GitHub Actions
 
 GitHub Actions will automatically execute the following `tox` commands to verify and publish the new release:
