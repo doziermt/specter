@@ -1,4 +1,4 @@
-name: Specter Project Workflow
+name: Specter PR Workflow
 
 on:
   push:

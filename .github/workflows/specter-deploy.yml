@@ -1,0 +1,53 @@
+name: Specter PR Workflow
+
+on:
+  push:
+    branches:
+    - master
+    tags:
+    - v*.*.*
+
+jobs:
+
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    needs: validate
+
+    steps:
+
+    - uses: actions/checkout@v2
+  
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+ 
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        pip install tox
+        pip install twine
+
+    - name: Build package
+      run: |
+        tox -e package-build
+
+    - name: Check package build
+      run: |
+        tox -e package-check
+
+    - name: Upload package to Test PyPi
+      run: |
+        tox -e package-test-upload
+      env:
+        TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+
+    - name: Upload package to PyPi
+      run: |
+        tox -e package-upload
+      env:
+        TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
