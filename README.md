@@ -293,18 +293,18 @@ After running the command above, `git-release-tag` will automatically perform th
 1. Update the `__version__` to `X.Y.Z` in `specter/__init__.py`
 2. Create a `vX.Y.Z` tagged commit for the release
 
-Where `v.X.Y.Z` denotes the [semantic release](https://github.com/semantic-release/semantic-release) corresponding to the new release.
+Where `X.Y.Z` denotes the [semantic release](https://github.com/semantic-release/semantic-release) corresponding to the new release.
 
 Afterward, push the tagged commit to the repository:
 
 > git push origin `vX.Y.Z`
 
-Ultimately, this will trigger [GitHub Actions](#github-actions) to perform its `deploy` workflow.
+Ultimately, this will trigger [GitHub Actions](#github-actions) causing it to perform its `deploy` workflow.
 
 ### Example
 
-Given: `v1.0.0` as the current `specter` version
-Example: Create a new minor release, `v1.1.0`
+Given: `1.0.0` as the current `specter` version
+Example: Create a new minor release, `1.1.0`
 Steps:
 
 1. `git checkout master`
