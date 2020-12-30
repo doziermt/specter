@@ -35,7 +35,9 @@ If applicable, please follow the links above for information on installing each 
 
 ### Installing Specter
 
-WIP
+Ensure that `pip` is installed and then run:
+
+> pip install specter-kali
 
 ### Running Specter
 
@@ -264,20 +266,26 @@ The following tox commands can be used:
 
 ## Release Guide
 
-When ready to create a new release of `specter`, run the following command:
+When ready to create a new release of `specter`, change to the `master` branch:
+
+> git checkout master
+
+And then create the new release using either a `patch`, `minor`, or `major` version update:
 
 > tox -e package-create -- [patch|minor|major]
 
 For example, to create a new `minor` release (assuming the existing one is 1.0.0), execute:
 
->  `tox -e package-create -- minor`
+> tox -e package-create -- minor
 
 This will automatically:
 
 * Update the `__version__` to 1.1.0 in `specter/__init__.py`
 * Create a 1.1.0 tagged commit for the release
 
-Afterward, `git push` the commit to the repository and merge it.
+Afterward, `git push` the tagged commit to the repository:
+
+> git push origin v1.1.0
 
 ### GitHub Actions
 
