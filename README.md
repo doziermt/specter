@@ -304,7 +304,9 @@ Ultimately, this will trigger [GitHub Actions](#github-actions) causing it to pe
 ### Example
 
 Given: `1.0.0` as the current `specter` version
+
 Example: Create a new minor release, `1.1.0`
+
 Steps:
 
 1. `git checkout master`
