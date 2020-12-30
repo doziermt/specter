@@ -14,7 +14,7 @@ with pathlib.Path('requirements.txt').open() as requirements_txt:
         for requirement in pkg_resources.parse_requirements(requirements_txt)
     ]
 
-setuptools.setup(name='specter',
+setuptools.setup(name='specter-kali',
                  version=__version__,
                  license='MIT',
                  author='Mike Dozier',
