@@ -61,7 +61,7 @@ jobs:
       run: |
         tox -e package-check
 
-    - name: Upload package to test.pypi
+    - name: Upload package to test pypi
       run: |
         tox -e package-test-upload
       env:
