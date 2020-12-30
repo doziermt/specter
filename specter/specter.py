@@ -5,8 +5,8 @@ import os
 from specter.commands import CleanList, Command, Init, Tree, WebScan, XmlScan
 from specter.config import validate_settings
 from specter.enums import Applications, Commands
-from specter import exceptions
-from specter.utils import workdir
+from specter import __version__, exceptions
+from specter.utils import log_info, workdir
 
 global INFO
 
@@ -37,9 +37,9 @@ INFO = '''
 * SPECTER RECON TOOL - KALI LINUX SECURITY TOOL *
 =================================================
 
-~~~~~~~~~~~
-Version 0.1
-~~~~~~~~~~~
+~~~~~~~~~~~~~
+Version %s
+~~~~~~~~~~~~~
 
 EXECUTION STEPS
 ---------------
@@ -48,7 +48,7 @@ EXECUTION STEPS
 1) specter clean_list
 2) specter xml_scan
 3) specter web_scan
-'''
+''' % __version__
 
 
 def _init_init_parser(subparsers):
@@ -61,13 +61,14 @@ def _init_init_parser(subparsers):
 def _init_clean_list_parser(subparsers):
     """Argument parser for clean_list operation."""
     clean_list_parser = subparsers.add_parser(
-        Commands.CLEAN_LIST.value, help='Execute a clean list using nmap')
+        Commands.CLEAN_LIST.value,
+        help='Generate a clean IP address list using nmap')
 
 
 def _init_xml_scan_parser(subparsers):
     """Argument parser for xml_scan operation."""
     port_scan_parser = subparsers.add_parser(
-        Commands.XML_SCAN.value, help='Execute a xml scan using masscan')
+        Commands.XML_SCAN.value, help='Execute an XML scan using masscan')
 
 
 def _init_web_scan_parser(subparsers):
@@ -109,7 +110,7 @@ def load_settings():
 
 
 def main():
-    print(INFO)
+    log_info(INFO)
 
     parser = argparse.ArgumentParser(prog='specter')
     subparsers = parser.add_subparsers(title='subcommands',
