@@ -275,18 +275,32 @@ And then create the new release using either a `patch`, `minor`, or `major` vers
 
 > tox -e package-create -- [patch|minor|major]
 
-For example, to create a new `minor` release (assuming the existing one is 1.0.0), execute:
+**NOTE**:
 
-> tox -e package-create -- minor
+> The task will default to `patch` if no argument is provided.
 
-This will automatically:
+After running the command above, `git-release-tag` will automatically perform the following steps for you:
 
-* Update the `__version__` to 1.1.0 in `specter/__init__.py`
-* Create a 1.1.0 tagged commit for the release
+1. Update the `__version__` to `X.Y.Z` in `specter/__init__.py`
+2. Create a `vX.Y.Z` tagged commit for the release
 
-Afterward, `git push` the tagged commit to the repository:
+Where `v.X.Y.Z` denotes the [semantic release](https://github.com/semantic-release/semantic-release) corresponding to the new release.
 
-> git push origin v1.1.0
+Afterward, push the tagged commit to the repository:
+
+> git push origin `vX.Y.Z`
+
+Ultimately, this will trigger [GitHub Actions](#github-actions) to perform its `deploy` workflow.
+
+### Example
+
+Given: `v1.0.0` as the current `specter` version
+Example: Create a new minor release, `v1.1.0`
+Steps:
+
+1. `git checkout master`
+2. `tox -e package-create -- minor`
+3. `git push origin v1.1.0`
 
 ### GitHub Actions
 
@@ -295,3 +309,7 @@ GitHub Actions will automatically execute the following `tox` commands to verify
 * `tox -e package-check`: Checks whether your distribution’s long description will render correctly on PyPI.
 * `tox -e package-test-upload`: Uploads the new release to https://test.pypi.org/
 * `tox -e package-upload`: Uploads the new release to https://pypi.org/
+
+**WARNING**:
+
+> Do **not** run these tasks locally. They are reserved for CI/CD only.
