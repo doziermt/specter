@@ -1,4 +1,4 @@
-# Specter Recon Tool
+# Specter
 
 [![pypi](https://pypip.in/v/specter-kali/badge.svg)](https://pypi.org/project/specter-kali/)
 ![Specter PR Workflow](https://github.com/doziermt/specter/workflows/Specter%20PR%20Workflow/badge.svg)
@@ -8,7 +8,7 @@
 
 > Currenlty Tested on KALI 2020.2
 
-Specter Recon Tool is a [KALI Linux](https://www.kali.org/) CLI tool for...
+Specter is a [KALI Linux](https://www.kali.org/) CLI tool for identifying network vulnerabilities on a given host using a variety of open-source scanning tools.
 
 #### Contents
 
@@ -34,29 +34,37 @@ If applicable, please follow the links above for information on installing each 
 
 ## Getting Started
 
+Ensure that `pip` is installed.
+
 ### Installing Specter
 
-Ensure that `pip` is installed and then run:
+Execute:
 
 > pip install specter-kali
+
+### Upgrading Specter
+
+Execute:
+
+> pip install specter-kali --upgrade
 
 ### Running Specter
 
 The following commands must be executed in order.
 
-* To run `init`:
+* Initialize the [Specter Work Directory](#specter-work-directory):
 
   > specter init
 
-* To run `clean_list`:
+* Invoke `clean_list` which uses `nmap` to generate a list of IPs to scan:
 
   > specter clean_list
 
-* To run `xml_scan`:
+* Invole `xml_scan` which uses `masscan` to scan all relevant IP addresses:
 
   > specter xml_scan
 
-* To run `web_scan`:
+* Invoke `web_scan` which uses `eyewitness` to perform further scanning:
 
   >  specter web_scan
 
@@ -64,9 +72,14 @@ For a list of additional commands to run, please execute `specter --help`.
 
 ## Configuration
 
+After running `specter init`, all configuration options are documented inside the `specter_workdir/settings.toml`.
+
+Ensure that this configuration file uses the correct `interface`, `ports`, etc., in order to generate meaningful results.
+
+### Sample Config File
+
 Specter uses the [Dynaconf](https://github.com/rochacbruno/dynaconf) Python library for its configuration
-parsing and validation library. This project's configuration file uses the
-[TOML](https://github.com/toml-lang/toml) markup language.
+parsing and validation library. This project's configuration file uses the [TOML](https://github.com/toml-lang/toml) markup language.
 
 Within the source code, a sample configuration file lives at path `samples/settings.sample.toml`. This sample configuration
 file is copied to the [Specter Work Directory](#specter-work-directory) after running `specter init`.
@@ -152,10 +165,6 @@ See the [Configuration Section](#configuration) for more information.
   * `ouput/web_reports/Eyewitness`: `eyewitness` output file
 
 ## Supported Commands
-
-**TIP**:
-
-> Running `specter --help` will print out a list of all supported commands and usage information.
 
 * `init`: Initializes the [Specter Work Directory](#specter-work-directory). This command should always be exected first.
 * `clean_list`: Generates a "clean target list" file, which enumerates the IP addresses to scan using `masscan`.
