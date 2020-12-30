@@ -1,4 +1,4 @@
-name: Specter PR Workflow
+name: Specter Deploy Workflow
 
 on:
   push:
@@ -12,8 +12,6 @@ jobs:
   deploy:
 
     runs-on: ubuntu-latest
-
-    needs: validate
 
     steps:
 
