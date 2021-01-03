@@ -51,7 +51,8 @@ class WebScan(Command):
         command = [
             self.APPLICATION, '--web', '--add-http-ports', self.ports,
             '--add-https-ports', self.ports, '--no-prompt',
-            '--threads %d' % self.threads, '--jitter', '%s' % self.jitter, '-f', self.clean_target_list_file_name,
+            '--threads %d' % self.threads, '--jitter',
+            '%s' % self.jitter, '-f', self.clean_target_list_file_name,
             '-d %s' % self.eyewitness_output_file
         ]
         self.run_command(command)
