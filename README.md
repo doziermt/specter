@@ -6,7 +6,7 @@
 
 **NOTE:**
 
-> Currenlty Tested on KALI 2020.2
+> Currenlty Tested on KALI 2020.4
 
 Specter is a [KALI Linux](https://www.kali.org/) CLI tool for identifying network vulnerabilities on a given host using a variety of open-source scanning tools.
 
