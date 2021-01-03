@@ -16,8 +16,6 @@ class Command(object, metaclass=ABCMeta):
     # Examples include ``Applications.NMAP.value`` or ``Applications.MASSCAN.value``.
     APPLICATION = None
 
-    REQUIRES_SUDO = False
-
     @classmethod
     def validate_application_exists(cls):
         """Validates that the application binary specified by `self.APPLICATION` exists in the system."""
@@ -53,9 +51,6 @@ class Command(object, metaclass=ABCMeta):
                 "The command passed to %s.run_command must be a list" %
                 cls.__name__)
 
-        if cls.REQUIRES_SUDO is True:
-            command = ["sudo"] + command
-
         command_to_run = ' '.join(command)
         op_name = inflection.underscore(cls.__name__)
 
@@ -64,10 +59,21 @@ class Command(object, metaclass=ABCMeta):
             'Calling %s via subprocess.run() with the following command:\n\n%s\n'
             % (cls.APPLICATION, command_to_run))
 
-        cls._run_command(command_to_run)
+        def handle_error(process):
+            raise exceptions.SubprocessExecutionException(
+                "Failed to execute operation '%s'. Reason: subprocess.run() returned non-zero exit status %d for last-executed command."
+                % (op_name, process.returncode))
 
-        if cls.REQUIRES_SUDO is True:
-            cls._override_output_ownership()
+        try:
+            proc = subprocess.run(command_to_run,
+                                  shell=True,
+                                  check=True,
+                                  universal_newlines=True)
+        except subprocess.SubprocessError as e:
+            handle_error(e)
+        else:
+            if proc.returncode != 0:
+                handle_error(proc)
 
         log_success("Successfully finished '%s' operation." % op_name)
 
@@ -131,32 +137,6 @@ class Command(object, metaclass=ABCMeta):
             os.makedirs(directory, exist_ok=True)
 
         return output_directory
-
-    @classmethod
-    def _run_command(cls, command_to_run):
-        def handle_error(process):
-            raise exceptions.SubprocessExecutionException(
-                "Failed to execute operation '%s'. Reason: subprocess.run() returned non-zero exit status %d for last-executed command."
-                % (op_name, process.returncode))
-
-        try:
-            proc = subprocess.run(command_to_run,
-                                  shell=True,
-                                  check=True,
-                                  universal_newlines=True)
-        except subprocess.SubprocessError as e:
-            handle_error(e)
-        else:
-            if proc.returncode != 0:
-                handle_error(proc)
-
-    @classmethod
-    def _override_output_ownership(cls):
-        root_output_directory = os.path.join(workdir.resolve(), 'output')
-        uid = os.getuid()
-        cls._run_command("sudo chown -R %s %s" %
-                         (str(uid), root_output_directory))
-        cls._run_command("sudo chmod -R 777 %s" % root_output_directory)
 
     @classmethod
     def _validate_path_exists(cls, path, settings_alias):
