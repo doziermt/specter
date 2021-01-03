@@ -9,7 +9,6 @@ from specter.enums import Applications
 
 class CleanList(Command):
     APPLICATION = Applications.NMAP.value
-    REQUIRES_SUDO = True
 
     @property
     def nmap_target_list_file(self):

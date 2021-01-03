@@ -12,7 +12,6 @@ from specter.utils import log_warning
 
 class XmlScan(Command):
     APPLICATION = Applications.MASSCAN.value
-    REQUIRES_SUDO = True
 
     WEB_PORTS_TO_SCAN = (
         ("tcp", "443"),
