@@ -135,7 +135,7 @@ specter_workdir/
 
 **NOTE**:
 
-> Your Specter work will may contain different host and IP files dependending on your network configuration.
+> Your Specter work directory may contain different host and IP files depending on your network configuration and scan results.
 
 ### Configuration Files
 
