@@ -16,6 +16,8 @@ class Command(object, metaclass=ABCMeta):
     # Examples include ``Applications.NMAP.value`` or ``Applications.MASSCAN.value``.
     APPLICATION = None
 
+    TIMESTAMP_FORMAT = '%Y-%m-%d_%H%M%S'
+
     @classmethod
     def validate_application_exists(cls):
         """Validates that the application binary specified by `self.APPLICATION` exists in the system."""
@@ -102,14 +104,13 @@ class Command(object, metaclass=ABCMeta):
         root_output_directory = os.path.join(workdir.resolve(), 'output')
 
         def _generate_new_subdirectory_name(sitename):
-            timestamp_format = '%Y-%m-%d_%H%M%S'
-            new_timestamp = datetime.now().strftime(timestamp_format)
+            new_timestamp = datetime.now().strftime(cls.TIMESTAMP_FORMAT)
             return '_'.join([sitename, new_timestamp])
 
         def _get_existing_subdirectory_name():
             def sort_by_timestamp(directory):
-                timestamp = ' '.join(directory.split('_')[1:])
-                return datetime.fromisoformat(timestamp)
+                timestamp = '_'.join(directory.split('_')[1:])
+                return datetime.strptime(timestamp, cls.TIMESTAMP_FORMAT)
 
             candidates = [
                 directory for directory in os.listdir(root_output_directory)
@@ -119,7 +120,7 @@ class Command(object, metaclass=ABCMeta):
                 raise exceptions.IllegalExecutionException(
                     "No Specter Work Directory snapshot found. Please run `specter clean_list` first then try again."
                 )
-            return sorted(candidates, key=sort_by_timestamp)[0]
+            return list(reversed(sorted(candidates, key=sort_by_timestamp)))[0]
 
         output_directory = os.path.join(
             root_output_directory,
