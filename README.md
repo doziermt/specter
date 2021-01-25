@@ -103,7 +103,7 @@ specter_workdir/
 ├── nmap_exclude_list.txt
 ├── nmap_target_list.txt
 ├── output/
-│   └── test_2020-08-08_10:32:35.413068/
+│   └── test_2020-08-08_103235/
 │       ├── hosts/
 │       │   ├── 10.0.0.1.txt
 │       │   ├── 10.0.0.13.txt
@@ -207,7 +207,7 @@ specter_workdir/
 ├── nmap_exclude_list.txt
 ├── nmap_target_list.txt
 ├── output/
-│   └── test_2020-10-28_11:16:53.937243/
+│   └── test_2020-10-28_111653/
 │       ├── hosts/
 │       ├── ports/
 │       ├── web_reports/
@@ -228,7 +228,7 @@ specter_workdir/
 ├── nmap_exclude_list.txt
 ├── nmap_target_list.txt
 ├── output/
-│   ├── test_2020-10-28_11:16:53.937243/
+│   ├── test_2020-10-28_111653/
 │   │   ├── hosts/
 │   │   ├── ports/
 │   │   ├── web_reports/
