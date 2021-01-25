@@ -66,7 +66,7 @@ The following commands must be executed in order.
   # Without banners.
   specter xml_scan
   # With banners.
-  spectr xml_scan --banners
+  specter xml_scan --banners
   ```
 
 * Invoke `web_scan` which uses `eyewitness` to perform further scanning:
