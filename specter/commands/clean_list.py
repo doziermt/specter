@@ -37,7 +37,7 @@ class CleanList(Command):
         self.output_directory = self.build_specter_output_folder_structure(
             self.SETTINGS.general.sitename, use_existing=False)
 
-    def execute(self):
+    def execute(self, *args, **kwargs):
         # Create a temporary file in order to temporarily dump out all the contents to a file
         # since we cannot capture stdout directly. This allows subprocess.run to dump stdout
         # to the terminal; afterward, we can re-analyze the stdout output by opening up the

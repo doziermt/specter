@@ -34,7 +34,7 @@ class Command(object, metaclass=ABCMeta):
                 % cls.APPLICATION)
 
     @classmethod
-    def run_command(cls, command):
+    def run_command(cls, command, log_msg_suffix=''):
         """Runs a subprocess command using ``subprocess.run``.
 
         The ``stdout`` and ``stderr`` are both emitted to the console since neither are captured.
@@ -54,7 +54,7 @@ class Command(object, metaclass=ABCMeta):
         command_to_run = ' '.join(command)
         op_name = inflection.underscore(cls.__name__)
 
-        log_info('Running %s operation...' % op_name)
+        log_info('Running %s operation %s...' % (op_name, log_msg_suffix))
         log_info(
             'Calling %s via subprocess.run() with the following command:\n\n%s\n'
             % (cls.APPLICATION, command_to_run))
@@ -171,7 +171,7 @@ class Command(object, metaclass=ABCMeta):
         self.validate_application_exists()
 
     @abstractmethod
-    def execute(self):
+    def execute(self, *args, **kwargs):
         """Method for executing the CLI applications associated with this ``Command``.
         All sub-classes must implement this.
         """

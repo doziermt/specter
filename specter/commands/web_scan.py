@@ -46,7 +46,7 @@ class WebScan(Command):
         # Use the number of available CPUs - 1 for the thread count.
         return multiprocessing.cpu_count() - 1
 
-    def execute(self):
+    def execute(self, *args, **kwargs):
         """Executes the web_scan command, currently only supports eyewitness."""
         command = [
             self.APPLICATION, '--web', '--add-http-ports', self.ports,

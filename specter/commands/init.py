@@ -37,7 +37,7 @@ class Init(Command):
                              (new_file_name, target_file_path))
                     shutil.copyfile(source_file_path, target_file_path)
 
-    def execute(self):
+    def execute(self, *args, **kwargs):
         exists_already = os.path.exists(self._root_output_directory)
         if exists_already:
             log_warning(

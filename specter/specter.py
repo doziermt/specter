@@ -53,35 +53,39 @@ EXECUTION STEPS
 
 def _init_init_parser(subparsers):
     """Argument parser for initializing specter input/output directory structure and configuration file."""
-    init_parser = subparsers.add_parser(
+    subparsers.add_parser(
         Commands.INIT.value,
         help='Initialize specter directory structure and config file')
 
 
 def _init_clean_list_parser(subparsers):
     """Argument parser for clean_list operation."""
-    clean_list_parser = subparsers.add_parser(
-        Commands.CLEAN_LIST.value,
-        help='Generate a clean IP address list using nmap')
+    subparsers.add_parser(Commands.CLEAN_LIST.value,
+                          help='Generate a clean IP address list using nmap')
 
 
 def _init_xml_scan_parser(subparsers):
     """Argument parser for xml_scan operation."""
-    port_scan_parser = subparsers.add_parser(
+    xml_scan_parser = subparsers.add_parser(
         Commands.XML_SCAN.value, help='Execute an XML scan using masscan')
+    xml_scan_parser.add_argument(
+        '--banners',
+        dest='include_banners',
+        action='store_true',
+        default=False,
+        help='Whether to capture banners while performing scan')
 
 
 def _init_web_scan_parser(subparsers):
     """Argument parser for web_scan operation."""
-    web_scan_parser = subparsers.add_parser(
-        Commands.WEB_SCAN.value, help='Execute a web scan using eyewitness')
+    subparsers.add_parser(Commands.WEB_SCAN.value,
+                          help='Execute a web scan using eyewitness')
 
 
 def _init_tree_parser(subparsers):
     """Argument parser for pretty-printing the specter directory as a tree."""
-    init_parser = subparsers.add_parser(
-        Commands.TREE.value,
-        help='Pretty prints the specter directory as a tree')
+    subparsers.add_parser(Commands.TREE.value,
+                          help='Pretty prints the specter directory as a tree')
 
 
 def get_command_from_name(alias):
@@ -134,7 +138,7 @@ def main():
             except FileNotFoundError as e:
                 parser.error(e)
 
-        command.execute()
+        command.execute(**vars(args))
     except exceptions.SpecterBaseException as e:
         parser.error(e)
     else:
