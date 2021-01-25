@@ -102,7 +102,8 @@ class Command(object, metaclass=ABCMeta):
         root_output_directory = os.path.join(workdir.resolve(), 'output')
 
         def _generate_new_subdirectory_name(sitename):
-            new_timestamp = str(datetime.now()).replace(' ', '_')
+            timestamp_format = '%Y-%m-%d_%H%M%S'
+            new_timestamp = datetime.now().strftime(timestamp_format)
             return '_'.join([sitename, new_timestamp])
 
         def _get_existing_subdirectory_name():
