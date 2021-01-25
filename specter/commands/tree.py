@@ -9,5 +9,5 @@ class Tree(Command):
     def __init__(self):
         super().__init__()
 
-    def execute(self):
+    def execute(self, *args, **kwargs):
         print_tree()

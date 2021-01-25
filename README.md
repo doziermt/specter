@@ -62,7 +62,12 @@ The following commands must be executed in order.
 
 * Invole `xml_scan` which uses `masscan` to scan all relevant IP addresses:
 
-  > specter xml_scan
+  ```
+  # Without banners.
+  specter xml_scan
+  # With banners.
+  spectr xml_scan --banners
+  ```
 
 * Invoke `web_scan` which uses `eyewitness` to perform further scanning:
 
