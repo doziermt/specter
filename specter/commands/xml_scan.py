@@ -208,11 +208,11 @@ class XmlScan(Command):
             #self.run_command(command, 'with banners included')
         #else:
         command = [
-            self.APPLICATION, "--max-retries=1", "--open", "-e",
-            self.interface, "-p", self.ports, "-iL",
-            self.xml_clean_target_list_file_name,
-            "--rate=%d" % self.scan_rate,
-            "-oX %s" % self.masscan_xml_path
-            ]
+                self.APPLICATION, "--max-retries=1", "--open", "-e",
+                self.interface, "-p", self.ports, "-iL",
+                self.xml_clean_target_list_file_name,
+                "--rate=%d" % self.scan_rate,
+                "-oX %s" % self.masscan_xml_path
+                ]
         self.run_command(command, 'with NO banners included')
         self._generate_output_files_from_masscan_xml()
