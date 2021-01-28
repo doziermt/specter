@@ -79,8 +79,9 @@ def _init_xml_scan_parser(subparsers):
 
 def _init_web_scan_parser(subparsers):
     """Argument parser for web_scan operation."""
-    subparsers.add_parser(Commands.WEB_SCAN.value,
-                          help='Execute a web scan using eyewitness after executing xml scan')
+    subparsers.add_parser(
+        Commands.WEB_SCAN.value,
+        help='Execute a web scan using eyewitness after executing xml scan')
 
 
 def _init_tree_parser(subparsers):
