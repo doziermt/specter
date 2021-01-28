@@ -205,7 +205,7 @@ class XmlScan(Command):
                 "-iL", self.xml_clean_target_list_file_name,
                 "-oA %s_banners" % self.masscan_xml_path
             ]
-            self.run_command(command, 'with banners included')
+            #self.run_command(command, 'with banners included')
         else:
             command = [
                 self.APPLICATION, "--max-retries=1", "--open", "-e",
