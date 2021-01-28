@@ -199,23 +199,20 @@ class XmlScan(Command):
                              "%s.txt" % ip_address), output)
 
     def execute(self, *args, include_banners=False, **kwargs):
-        if include_banners:
-            command = [
-                self.APPLICATION, "--max-retries=1", "--banners",
-                "--source-ip", self.ip, "--source-port 61000", "--open", "-e",
-                self.interface, "-p", self.ports, "-iL",
-                self.xml_clean_target_list_file_name,
-                "--rate=%d" % self.scan_rate,
-                "-oX %s" % self.masscan_xml_path
-            ]
-            self.run_command(command, 'with banners included')
-        else:
-            command = [
+        #if include_banners:
+            #command = [
+            #    "nmap -sT --open -p10-100",
+            #    "-iL", self.xml_clean_target_list_file_name,
+            #    "-oA %s_banners" % self.masscan_xml_path
+            #]
+            #self.run_command(command, 'with banners included')
+        #else:
+        command = [
                 self.APPLICATION, "--max-retries=1", "--open", "-e",
                 self.interface, "-p", self.ports, "-iL",
                 self.xml_clean_target_list_file_name,
                 "--rate=%d" % self.scan_rate,
                 "-oX %s" % self.masscan_xml_path
-            ]
-            self.run_command(command, 'with NO banners included')
+                ]
+        self.run_command(command, 'with NO banners included')
         self._generate_output_files_from_masscan_xml()
