@@ -44,10 +44,11 @@ Version %s
 EXECUTION STEPS
 ---------------
 
-0) specter init
-1) specter clean_list
-2) specter xml_scan
-3) specter web_scan
+0) specter init        // generates specter file structure
+1) specter clean_list  // generates a new output directory with a clean target list for xml_scan
+2) specter xml_scan    // executes a port scan with masscan and generates a web_scan clean target list
+3) specter web_scan    // executes a web scan with eyewitness
+4) specter tree        // run at any time to view specter file scructure 
 ''' % __version__
 
 
@@ -79,7 +80,7 @@ def _init_xml_scan_parser(subparsers):
 def _init_web_scan_parser(subparsers):
     """Argument parser for web_scan operation."""
     subparsers.add_parser(Commands.WEB_SCAN.value,
-                          help='Execute a web scan using eyewitness')
+                          help='Execute a web scan using eyewitness after executing xml scan')
 
 
 def _init_tree_parser(subparsers):
