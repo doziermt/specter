@@ -13,13 +13,13 @@ nmap_exclude_list_file_name = "nmap_exclude_list.txt"
 # (required) The clean target list of IPs that will be scanned.
 clean_target_list_file_name = "web_clean_target_list.txt"
 # (required) The jitter is the milisecond time delay between sent packets for scanning.
-jitter = 0
+jitter = 4
 # (required) The comma-delimited ports for Eyewitness to scan.
 ports = "80,443,8000,8080,8443"
 
 [xml_scan]
 # (required) The masscan IP is the source IP for banner grabbing, use an unused address in the same subnet as the scanning adapter.
-# NOTE: if a VPN is in use the scanning adapter IP must be used.
+# NOTE: if a VPN is in use the scanning adapter IP must be used. NO LONGER IN USE
 masscan_ip = "10.0.0.7"
 # (required) The interface is the network adapter used for scanning.
 interface = "eth0"
